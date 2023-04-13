@@ -129,7 +129,7 @@ app.post('/login', async (req, res) => {
 
 const auth = (req, res, next) => {
   if (!req.session.user) {
-    return res.redirect("/login");
+    return res.redirect("/register");
   }
   next();
 };
