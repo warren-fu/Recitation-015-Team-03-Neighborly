@@ -81,7 +81,14 @@ const auth = (req, res, next) => {
   next();
 };
 
+app.get("/logout", (req, res) => {
+  req.session.destroy();
+  res.render("pages/login", {message: 'successfully logged out', error: false});
+});
+
 app.use(auth);
+
+
 
 //TODO - Everything that you need to be logged in for
 
