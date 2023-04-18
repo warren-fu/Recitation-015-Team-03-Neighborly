@@ -7,7 +7,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 chai.should();
 chai.use(chaiHttp);
-const {assert, expect} = chai;
+const { assert, expect } = chai;
 
 describe('Server!', () => {
   // Sample test case given to test / endpoint.
@@ -25,4 +25,14 @@ describe('Server!', () => {
 
   // ===========================================================================
   // TO-DO: Part A Login unit test case
+  it('Returns the default login message', done => {
+    chai
+      .request(server)
+      .get('/login')
+      .end((err, res) => {
+        expect(res.body.status).to.equals('success');
+        assert.strictEqual(res.body.message, 'Login page successful');
+        done();
+      });
+  });
 });
