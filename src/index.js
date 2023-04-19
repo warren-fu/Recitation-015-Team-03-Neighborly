@@ -141,7 +141,9 @@ app.post('/login', async (req, res) => {
     });
 });
 
-
+app.post('/profile', async (req, res) =>{
+  
+});
 
 app.get("/logout", (req, res) => {
   req.session.destroy();
