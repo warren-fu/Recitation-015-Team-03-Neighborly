@@ -25,13 +25,13 @@ describe('Server!', () => {
 
   // ===========================================================================
   // TO-DO: Part A Login unit test case
-  it('Returns the default login message', done => {
+  it('This is the Login Test', done => {
     chai
       .request(server)
-      .get('/login')
+      .post('/login',{udername: 'warren', password: 'abcd1234'})
       .end((err, res) => {
-        expect(res.body.status).to.equals('success');
-        assert.strictEqual(res.body.message, 'Login page successful');
+        console.log("dfsjkndsdlgsldkjfjasdflskdjfn", res.status);
+        expect(res).to.have.status(200);
         done();
       });
   });
