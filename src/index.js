@@ -74,6 +74,83 @@ app.get('/welcome', (req, res) => {
 
 // TODO - Login and Register
 
+
+app.get('/', (req, res) => {
+  res.redirect('/explore');
+});
+
+app.get('/register', (req, res) => {
+  res.render('pages/register',{});
+});
+
+// Register
+app.post('/register', async (req, res) => {
+  //hash the password using bcrypt library
+  const hash = await bcrypt.hash(req.body.password, 10);
+
+  // To-DO: Insert username and hashed password into 'users' table
+  if (hash.err || req.body.username === "" || req.body.password === ""){
+    res.redirect('/register');
+  }
+  else{
+      var query = `INSERT INTO users(username, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ('${req.body.username}', 1, 1, '${hash}', a@b.com, 1111111111, male);`;
+      
+      db.any(query)
+      .then(function (data) {
+        res.redirect('/login');
+      })
+      .catch(function (err) {
+        console.log(err);
+          res.render('pages/register',{});
+      });
+  }
+});
+
+
+
+app.get('/login', (req, res) => {
+  res.json({status: 'success', message: 'Works!'});
+  res.render('pages/login',{});
+});
+
+app.post('/login', async (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  const query = `SELECT * FROM users WHERE username = '${username}';`;
+
+  db.one(query)
+    .then((data) => {
+      user.username = data.username;
+      user.password = data.password;
+      if (bcrypt.compare(password, user.password)){
+        req.session.user = user;
+        req.session.save();
+        
+        res.redirect("/");
+        
+      }
+      else{
+        console.log("Incorrect username or password.");
+        res.render('/views/pages/login.ejs',{})
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.redirect('/register');
+    });
+});
+
+
+
+app.get("/logout", (req, res) => {
+  req.session.destroy();
+  res.render("pages/login");
+});
+
+
+
+
+
 const auth = (req, res, next) => {
   if (!req.session.user) {
     return res.redirect("/login");
