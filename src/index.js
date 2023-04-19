@@ -141,8 +141,15 @@ app.post('/login', async (req, res) => {
     });
 });
 
+
+//TEST
+app.get('/profile', async (req, res) =>{
+  res.render("pages/profile")
+});
+
+//TODO
 app.post('/profile', async (req, res) =>{
-  
+
 });
 
 app.get("/logout", (req, res) => {
