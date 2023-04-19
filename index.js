@@ -62,6 +62,10 @@ app.use(
 // *****************************************************
 
 // TODO - Include your API routes here
+app.get('/welcome', (req, res) => {
+  res.json({status: 'success', message: 'Welcome!'});
+});
+
 app.get('/', (req, res) => {
   return res.redirect('/login');
 });
@@ -131,13 +135,13 @@ app.use(auth);
 app.get('/explore', (req, res) => {
 
   axios({
-    url: `https://app.ticketmaster.com/discovery/v2/events.json`,
+    url: `https://realty-in-us.p.rapidapi.com/locations/v2/auto-complete`,
     method: 'GET',
     dataType: 'json',
     params: {
       "apikey": req.session.user.api_key,
-      "keyword": "Piano", //you can choose any artist/event here
-      "size": 10,
+      "input": "new york", //you can choose any place here
+      "limit": 10,
     }
   })
     .then(results => {
