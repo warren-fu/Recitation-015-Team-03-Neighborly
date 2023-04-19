@@ -1,0 +1,16 @@
+The three features that will be tested are register, login, and the explore page.
+    1. Register: The user should be able to register using a username, email, and password. If the user enters an invalid email, it will ask them to
+    provide a valid one. Some test data we are going to use is username (a), email (a@a), and password(a).
+    If the test results are positive, then the user will be brought to the login page where they can then enter in the information they used to register.
+    
+    2. Login: The user should be able to enter in the username and password that they used to register. If the user enters an invalid username or password, 
+    it will ask them to enter the correct username or password. We are going to use the same test data as the data from the register test. 
+    If the test results are positive, then the user will be home page where they will be brough to the explore page, where they can also access profiles, the feed, and listings.
+    
+    3. Explore Page: After being brought to the explore page the user should be able to use the map, look at listings, and click on individual listings. 
+    If the user clicks on a listing, it will bring them to the listing tab where they can view images, the address, price, amenities, and neighborhood statistics. 
+    We are going to use data from API calls from Realty in US to test this feature.
+    If the test results are positive, then the user will be able to apply for a certain listing.
+    
+In all of these tests, we will be testing this feature on our local web browser environment that is being hosted through Docker.
+Additionally, The user acceptance testers will be people looking for a place to live in order to get the most accurate results and feedback.
