@@ -1,0 +1,59 @@
+<%- include ('../partials/header') %>
+    <%- include ('../partials/menu') %>
+        <div class="col">
+            <%- include ('../partials/message') %>
+        </div>
+        <main>
+            <div class="container">
+                <!-- THE REST OF YOUR HTML CODE GOES HERE -->
+                <h1>
+                    Explore Page
+                </h1>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-center" style="width: 20%;">Name</th>
+                            <th scope="col" class="text-center" style="width: 33.3%;">Image</th>
+                            <th scope="col" class="text-center" style="width: 16.7%;">Date</th>
+                            <th scope="col" class="text-center" style="width: 16.7%;">Time</th>
+                            <th scope="col" class="text-center" style="width: 16.7%;">Book Now</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(var i=0; i < results.length; i++) { %>
+                            <tr>
+                                <td class="text-center">
+                                    <%= results[i].name %>
+                                </td>
+                                <td class="text-center">
+                                    <img src="<%=results[i].images[0].url %>" alt="yug" style="width: 75%;"></img>
+                                </td>
+                                <td class="text-center">
+                                    <span style="white-space: nowrap;">
+                                        <%= results[i].dates.start.localDate %>
+                                    </span>
+                                </td>
+
+                                <td class="text-center">
+                                    <% var militaryTime=results[i].dates.start.localTime; var
+                                        timeArr=militaryTime.split(':'); var hours=parseInt(timeArr[0]); var
+                                        minutes=timeArr[1]; var ampm=hours>= 12 ? 'PM' : 'AM';
+                                        hours = hours % 12;
+                                        hours = hours ? hours : 12;
+                                        var standardTime = hours + ':' + minutes + ' ' + ampm;
+                                        %>
+                                        <%= standardTime %>
+                                </td>
+                                <td class="text-center">
+                                    <button type="submit" class="btn btn-primary"
+                                        onclick="location.href = '<%= results[i].url %>'">
+                                        Book Now
+                                    </button>
+                                </td>
+                            </tr>
+                            <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+        <%- include ('../partials/footer') %>
