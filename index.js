@@ -9,13 +9,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
 const bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
-const { json } = require('body-parser');
 
-
-const user = {
-  username: undefined,
-  password: undefined,
-}
 // *****************************************************
 // <!-- Section 2 : Connect to DB -->
 // *****************************************************
@@ -62,17 +56,12 @@ app.use(
     extended: true,
   })
 );
+
 // *****************************************************
 // <!-- Section 4 : API Routes -->
 // *****************************************************
 
 // TODO - Include your API routes here
-
-app.get('/welcome', (req, res) => {
-    res.json({status: 'success', message: 'Welcome!'});
-  });
-
-// TODO - Login and Register
 app.get('/', (req, res) => {
   return res.redirect('/login');
 });
@@ -116,7 +105,7 @@ app.post('/login', async (req, res) => {
         api_key: process.env.API_KEY,
       };
       req.session.save();
-      return res.redirect('/discover');
+      return res.redirect('/explore');
     }
     else {
       return res.render('pages/login', { message: 'Incorrect username or password' });
@@ -127,16 +116,19 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Authentication Middleware.
 const auth = (req, res, next) => {
   if (!req.session.user) {
-    return res.redirect("/register");
+    // Default to login page.
+    return res.redirect('/register');
   }
   next();
 };
 
+// Authentication Required
 app.use(auth);
 
-app.get('/discover', (req, res) => {
+app.get('/explore', (req, res) => {
 
   axios({
     url: `https://app.ticketmaster.com/discovery/v2/events.json`,
@@ -150,13 +142,13 @@ app.get('/discover', (req, res) => {
   })
     .then(results => {
       console.log(results); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
-      res.render('pages/discover', { results: results.data._embedded.events })
+      res.render('pages/explore', { results: results.data._embedded.events })
 
     })
     .catch(error => {
       // Handle errors
       console.log(error);
-      res.render('pages/discover', { results: [] })
+      res.render('pages/explore', { results: [] })
     });
 });
 
@@ -166,11 +158,9 @@ app.get('/logout', (req, res) => {
   console.log('Logged out successfully');
 });
 
-//TODO - Everything that you need to be logged in for
-
 // *****************************************************
 // <!-- Section 5 : Start Server-->
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
-module.exports = app.listen(3000);
+app.listen(3000);
 console.log('Server is listening on port 3000');
