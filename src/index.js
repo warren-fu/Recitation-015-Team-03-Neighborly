@@ -136,6 +136,36 @@ const auth = (req, res, next) => {
 
 app.use(auth);
 
+app.get('/discover', (req, res) => {
+
+  axios({
+    url: `https://app.ticketmaster.com/discovery/v2/events.json`,
+    method: 'GET',
+    dataType: 'json',
+    params: {
+      "apikey": req.session.user.api_key,
+      "keyword": "Piano", //you can choose any artist/event here
+      "size": 10,
+    }
+  })
+    .then(results => {
+      console.log(results); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
+      res.render('pages/discover', { results: results.data._embedded.events })
+
+    })
+    .catch(error => {
+      // Handle errors
+      console.log(error);
+      res.render('pages/discover', { results: [] })
+    });
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.render('pages/login', { message: 'Logged out successfully' });
+  console.log('Logged out successfully');
+});
+
 //TODO - Everything that you need to be logged in for
 
 // *****************************************************

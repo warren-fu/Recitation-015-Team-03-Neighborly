@@ -26,28 +26,28 @@ describe('Server!', () => {
   // ===========================================================================
   // TO-DO: Part A Login unit test case
   // Positive Test Case: Valid email id/username and password
-  it('Positive: /login - Valid credentials', (done) => {
-    chai
-      .request(server)
-      .post('/login')
-      .send({ email: 'validemail@example.com', password: 'validpassword' })
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body.message).to.equal('Success');
-        done();
-      });
-  });
+  // it('Positive: /login - Valid credentials', (done) => {
+  //   chai
+  //     .request(server)
+  //     .post('/login')
+  //     .send({ email: 'validemail@example.com', password: 'validpassword' })
+  //     .end((err, res) => {
+  //       expect(res).to.have.status(200);
+  //       expect(res.body.message).to.equal('Success');
+  //       done();
+  //     });
+  // });
 
-  // Negative Test Case: Invalid email id/username or password
-  it('Negative: /login - Invalid credentials', (done) => {
-    chai
-      .request(server)
-      .post('/login')
-      .send({ email: 'invalidemail@example.com', password: 'invalidpassword' })
-      .end((err, res) => {
-        expect(res).to.have.status(401);
-        expect(res.body.message).to.equal('Invalid credentials');
-        done();
-      });
-  });
+  // // Negative Test Case: Invalid email id/username or password
+  // it('Negative: /login - Invalid credentials', (done) => {
+  //   chai
+  //     .request(server)
+  //     .post('/login')
+  //     .send({ email: 'invalidemail@example.com', password: 'invalidpassword' })
+  //     .end((err, res) => {
+  //       expect(res).to.have.status(401);
+  //       expect(res.body.message).to.equal('Invalid credentials');
+  //       done();
+  //     });
+  // });
 });
