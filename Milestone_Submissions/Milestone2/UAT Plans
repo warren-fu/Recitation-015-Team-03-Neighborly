@@ -13,4 +13,4 @@ The three features that will be tested are register, login, and the explore page
     If the test results are positive, then the user will be able to apply for a certain listing.
     
 In all of these tests, we will be testing this feature on our local web browser environment that is being hosted through Docker.
-Additionally, the user acceptance testers will be people looking for a place to live in order to get the most accurate results and feedback.
+Additionally,  the user acceptance testers will be people looking for a place to live in order to get the most accurate results and feedback.
