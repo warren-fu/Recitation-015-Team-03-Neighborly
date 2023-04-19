@@ -1,3 +1,5 @@
-﻿* Update epic names and user Descriptions
+4/19/2023
+
+* Update epic names and user Descriptions
 * Assign story points to all user stories
 * Update the release notes each week
