@@ -1,4 +1,4 @@
-The three features that will be tested are register, login, and the explore page.
+The three features within our finished product that will be tested are register, login, and the explore page.
     1. Register: The user should be able to register using a username, email, and password. If the user enters an invalid email, it will ask them to
     provide a valid one. Some test data we are going to use is username (a), email (a@a), and password(a).
     If the test results are positive, then the user will be brought to the login page where they can then enter in the information they used to register.
