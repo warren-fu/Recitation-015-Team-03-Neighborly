@@ -25,7 +25,7 @@ describe('Server!', () => {
 
   // ===========================================================================
   // TO-DO: Part A Login unit test case
-  it('BRUH CHANGE THIS', done => {
+  it('This is the Login Test', done => {
     chai
       .request(server)
       .get('/login')

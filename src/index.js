@@ -93,7 +93,7 @@ app.post('/register', async (req, res) => {
     res.redirect('/register');
   }
   else{
-      var query = `INSERT INTO users(username, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ('${req.body.username}', 1, 1, '${hash}', a@b.com, 1111111111, male);`;
+      var query = `INSERT INTO users(username, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ('${req.body.username}', 1, 1, '${hash}', a@b.com, 1111111111, male, '2000-02-22');`;
       
       db.any(query)
       .then(function (data) {
