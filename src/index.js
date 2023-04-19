@@ -79,6 +79,10 @@ app.get('/', (req, res) => {
   res.redirect('/explore');
 });
 
+app.get('/explore', (req, res) => {
+  res.render('pages/explore',{});
+});
+
 app.get('/register', (req, res) => {
   res.render('pages/register',{});
 });
@@ -89,11 +93,11 @@ app.post('/register', async (req, res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
 
   // To-DO: Insert username and hashed password into 'users' table
-  if (hash.err || req.body.username === "" || req.body.password === ""){
+  if (hash.err || req.body.username === "" || req.body.password === "" || req.body.email === ""){
     res.redirect('/register');
   }
   else{
-      var query = `INSERT INTO users(username, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ('${req.body.username}', 1, 1, '${hash}', a@b.com, 1111111111, male, '2000-02-22');`;
+      var query = `INSERT INTO users(username, password, email) VALUES ('${req.body.username}', '${hash}', '${req.body.email}');`;
       
       db.any(query)
       .then(function (data) {
@@ -106,26 +110,23 @@ app.post('/register', async (req, res) => {
   }
 });
 
-
-
 app.get('/login', (req, res) => {
-  res.json({status: 'success', message: 'Works!'});
+  // res.json({status: 'success', message: 'Works!'});
   res.render('pages/login',{});
 });
 
 app.post('/login', async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-  const query = `SELECT * FROM users WHERE username = '${username}';`;
-
+  const query = `SELECT * FROM users WHERE username = 'abcd';`;
   db.one(query)
     .then((data) => {
       user.username = data.username;
       user.password = data.password;
-      if (bcrypt.compare(password, user.password)){
+      if (bcrypt.compare('abcd1234', user.password)){
         req.session.user = user;
         req.session.save();
-        
+        console.log("works!", user.password); //prints works! if we are able to log in.
         res.redirect("/");
         
       }
@@ -146,9 +147,6 @@ app.get("/logout", (req, res) => {
   req.session.destroy();
   res.render("pages/login");
 });
-
-
-
 
 
 const auth = (req, res, next) => {

@@ -28,10 +28,10 @@ describe('Server!', () => {
   it('This is the Login Test', done => {
     chai
       .request(server)
-      .get('/login')
+      .post('/login',{udername: 'warren', password: 'abcd1234'})
       .end((err, res) => {
-        expect(res.body.status).to.equals('success');
-        assert.strictEqual(res.body.message, 'Works!');
+        console.log("dfsjkndsdlgsldkjfjasdflskdjfn", res.status);
+        expect(res).to.have.status(200);
         done();
       });
   });
