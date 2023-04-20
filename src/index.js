@@ -169,7 +169,7 @@ app.post('/register', async (req, res) => {
     req.body.gender,
     req.body.birthdate,
   ])
-    .then(function (data) {
+    .then(function () {
       return res.redirect('/login');
     })
     .catch(function () {
@@ -194,7 +194,7 @@ app.post('/login', async (req, res) => {
         api_key: process.env.API_KEY,
       };
       req.session.save();
-      return res.redirect('/discover');
+      return res.redirect('/explore');
     }
     else {
       return res.render('pages/login', { message: 'Incorrect username or password' });
