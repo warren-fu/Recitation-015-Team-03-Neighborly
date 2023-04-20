@@ -154,7 +154,7 @@ app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
   const hash = await bcrypt.hash(req.body.password, 10);
   // To-DO: Insert username and hashed password into 'users' table
-  const query = "INSERT INTO users (username, password) VALUES ($1, $2);";
+  const query = "INSERT INTO users (username, email, password) VALUES ($1, $2, $3);";
   db.any(query, [
     req.body.username,
     hash,
