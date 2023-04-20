@@ -153,13 +153,23 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
   const hash = await bcrypt.hash(req.body.password, 10);
-  // To-DO: Insert username and hashed password into 'users' table
-  const query = "INSERT INTO users (username, email, password) VALUES ($1, $2, $3);";
+  // set property and status ids to null or zero
+  const propertyID = 0;
+  const statusID = 0;
+
+  const query = "INSERT INTO users (username, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
+
   db.any(query, [
     req.body.username,
+    propertyID,
+    statusID,
     hash,
+    req.body.email,
+    req.body.phone_number,
+    req.body.gender,
+    req.body.birthdate,
   ])
-    .then(function () {
+    .then(function (data) {
       return res.redirect('/login');
     })
     .catch(function () {
