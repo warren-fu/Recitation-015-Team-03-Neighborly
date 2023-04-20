@@ -1,16 +1,18 @@
-The three features within our finished product that will be tested are register, login, and the explore page.
-    1. Register: The user should be able to register using a username, email, and password. If the user enters an invalid email, it will ask them to
-    provide a valid one. Some test data we are going to use is username (a), email (a@a), and password(a).
-    If the test results are positive, then the user will be brought to the login page where they can then enter in the information they used to register.
+The three features within our finished product that will be tested are the explore page, listing, and feed.
+    1. Explore Page: After being brought to the explore page the user should be able to use the map, look at listings, and click on individual listings. 
+    If the user clicks on a listing, it will bring them to the listing tab. They should also be able to scroll and move around on a map.
+    We are going to use data from a map API to test this feature.
+    If the test results are positive, then the user will be able to use an active map and click on each listing.
     
-    2. Login: The user should be able to enter in the username and password that they used to register. If the user enters an invalid username or password, 
-    it will ask them to enter the correct username or password. We are going to use the same test data as the data from the register test. 
-    If the test results are positive, then the user will be home page where they will be brought to the explore page, where they can also access profiles, the feed, and listings.
+    1. Listing: The user should be able to view the  images, the address, price, amenities, and neighborhood statistics. 
+    This onformation should be provided by the Realty in US API. Some test data we are going to use is they key word "new york" to try and display listings there.
+    If the test results are positive, then the user will be able to see the relevant information and apply for the listing/ask a question at the bottom.
     
-    3. Explore Page: After being brought to the explore page the user should be able to use the map, look at listings, and click on individual listings. 
-    If the user clicks on a listing, it will bring them to the listing tab where they can view images, the address, price, amenities, and neighborhood statistics. 
-    We are going to use data from API calls from Realty in US to test this feature.
-    If the test results are positive, then the user will be able to apply for a certain listing.
+    2. Feed: The user should be able to click on the feed tab and scroll through different posts with the subject, description, and the ability to expand the text. 
+    If the user clicks on "Your Questions", they should be able to access the previous questions that they have posted under their account.
+    We are going to use post and get requests to fetch the data from other users in order to see posts on the feed and pull questions from the user's account. 
+    If the test results are positive, then the user will be able to see all of this information and even add to the feed if they would like.
     
 In all of these tests, we will be testing this feature on our local web browser environment that is being hosted through Docker.
+These test cases will be conducted by the members of the Neighborly Connect group. Other members of the CSCI3308 course who did not write this API will also be testing this project.
 Additionally, the user acceptance testers will be people looking for a place to live in order to get the most accurate results and feedback.
