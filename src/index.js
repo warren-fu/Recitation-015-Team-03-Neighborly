@@ -67,96 +67,143 @@ app.use(
 // *****************************************************
 
 // TODO - Include your API routes here
+app.get("/get_user", (req, res) => {
+  const query = 'SELECT * FROM users WHERE username = $1;';
+
+  db.one(query, [req.query.username]).then(data => {
+    res.status(200).json(data);
+  }).catch(err => {
+    res.status(404).json(err);
+  });
+});
+
+app.get("/get_neighborhood", (req, res) => {
+  db.one(query, [req.query.username]).then(async data => {
+    console.log(`https://maps.googleapis.com/maps/api/geocode/json?address=` + data.address_line1.replaceAll(' ', '\+') + ',+' + data.city + ',+' + data.state + '+' + data.zipcode + '&key=' + process.env.API_KEY);
+    await axios({
+      url: `https://maps.googleapis.com/maps/api/geocode/json?address=` + data.address_line1.replaceAll(' ','\+') + '+' + data.city + '+' + data.state + '&key=' + process.env.API_KEY,
+      method: 'GET'
+    }).then(results => {
+      results.data.results[0].address_components.forEach(elem => {
+        if(elem.types.includes('neighborhood')){
+          res.status(200).json({neighborhood: elem.long_name});
+        } 
+      });
+    }).catch(err => {
+      res.status(404).json(err);
+    });
+  }).catch(err => {
+    res.status(404).json(err);
+  }); 
+});
+
+app.get('/get_reviews', (req, res) => {
+  const property_id = req.query.property_id;
+  const query = 'SELECT subject, description, rating FROM reviews WHERE property_id = $1;';
+
+  db.any(query, [property_id])
+  .then(data => {
+    res.status(200).json(data);
+  })
+  .catch(err => {
+    res.status(404).json(err);
+  });
+});
+
+app.post('/add_review', (req, res) => {
+  const username = req.query.username;
+  const subject = req.query.subject;
+  const description = req.query.description;
+  const rating = req.query.rating;
+  const query = 'INSERT INTO reviews (username, property_id, subject, description, rating) VALUES ($1, $2, $3, $4, $5) returning *;'
+
+  db.task(task => {
+    return task.batch([
+      task.one('SELECT property_id FROM users WHERE username = $1', [username]),
+    ]);
+  })
+  .then(data => {
+    db.any(query, [username,parseInt(data[0].property_id),subject,description,parseInt(rating)])
+    .then(res => {
+      res.status(200).json(res);
+    })
+    .catch(err => {
+      res.status(404).json(err);
+    });
+  })
+  .catch(err => {
+    res.status(404).json(err);
+  });
+});
 
 app.get('/welcome', (req, res) => {
     res.json({status: 'success', message: 'Welcome!'});
   });
 
 // TODO - Login and Register
-
-
 app.get('/', (req, res) => {
-  res.redirect('/explore');
-});
-
-app.get('/explore', (req, res) => {
-  res.render('pages/explore',{});
+  return res.redirect('/login');
 });
 
 app.get('/register', (req, res) => {
-  res.render('pages/register',{});
+  return res.render('pages/register');
 });
 
 // Register
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
   const hash = await bcrypt.hash(req.body.password, 10);
+  // set property and status ids to null or zero
+  const propertyID = 0;
+  const statusID = 0;
 
-  // To-DO: Insert username and hashed password into 'users' table
-  if (hash.err || req.body.username === "" || req.body.password === "" || req.body.email === ""){
-    res.redirect('/register');
-  }
-  else{
-      var query = `INSERT INTO users(username, password, email) VALUES ('${req.body.username}', '${hash}', '${req.body.email}');`;
-      
-      db.any(query)
-      .then(function (data) {
-        res.redirect('/login');
-      })
-      .catch(function (err) {
-        console.log(err);
-          res.render('pages/register',{});
-      });
-  }
-});
+  const query = "INSERT INTO users (username, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
 
-app.get('/login', (req, res) => {
-  // res.json({status: 'success', message: 'Works!'});
-  res.render('pages/login',{});
-});
-
-app.post('/login', async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  const query = `SELECT * FROM users WHERE username = 'abcd';`;
-  db.one(query)
-    .then((data) => {
-      user.username = data.username;
-      user.password = data.password;
-      if (bcrypt.compare('abcd1234', user.password)){
-        req.session.user = user;
-        req.session.save();
-        console.log("works!", user.password); //prints works! if we are able to log in.
-        res.redirect("/");
-        
-      }
-      else{
-        console.log("Incorrect username or password.");
-        res.render('/views/pages/login.ejs',{})
-      }
+  db.any(query, [
+    req.body.username,
+    propertyID,
+    statusID,
+    hash,
+    req.body.email,
+    req.body.phone_number,
+    req.body.gender,
+    req.body.birthdate,
+  ])
+    .then(function (data) {
+      return res.redirect('/login');
     })
-    .catch((err) => {
-      console.log(err);
-      res.redirect('/register');
+    .catch(function () {
+      return res.render('pages/register', { message: 'This account has already been registered' });
     });
 });
 
-
-//TEST
-app.get('/profile', async (req, res) =>{
-  res.render("pages/profile")
+app.get("/login", (req, res) => {
+  return res.render("pages/login");
 });
 
-//TODO
-app.post('/profile', async (req, res) =>{
-
+app.post('/login', async (req, res) => {
+  const pwInDB = await db.any('SELECT * FROM users WHERE users.username = $1', [
+    req.body.username])
+    .catch(function () {
+      return res.render('pages/login', { message: 'Database request failed' });
+    });
+  if (pwInDB.length > 0) {
+    const match = await bcrypt.compare(req.body.password, pwInDB[0].password);
+    if (match) {
+      req.session.user = {
+        api_key: process.env.API_KEY,
+      };
+      req.session.save();
+      return res.redirect('/discover');
+    }
+    else {
+      return res.render('pages/login', { message: 'Incorrect username or password' });
+    }
+  }
+  else {
+    return res.redirect('/register');
+  }
 });
-
-app.get("/logout", (req, res) => {
-  req.session.destroy();
-  res.render("pages/login");
-});
-
 
 const auth = (req, res, next) => {
   if (!req.session.user) {
@@ -165,17 +212,11 @@ const auth = (req, res, next) => {
   next();
 };
 
-app.get("/logout", (req, res) => {
-  req.session.destroy();
-  res.render("pages/login", {message: 'successfully logged out', error: false});
-});
-
 app.use(auth);
-
-
 
 //TODO - Everything that you need to be logged in for
 
+app.get('/explore')
 // *****************************************************
 // <!-- Section 5 : Start Server-->
 // *****************************************************
