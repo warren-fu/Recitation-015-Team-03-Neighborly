@@ -67,6 +67,74 @@ app.use(
 // *****************************************************
 
 // TODO - Include your API routes here
+app.get("/get_user", (req, res) => {
+  const query = 'SELECT * FROM users WHERE username = $1;';
+
+  db.one(query, [req.query.username]).then(data => {
+    res.status(200).json(data);
+  }).catch(err => {
+    res.status(404).json(err);
+  });
+});
+
+app.get("/get_neighborhood", (req, res) => {
+  db.one(query, [req.query.username]).then(async data => {
+    console.log(`https://maps.googleapis.com/maps/api/geocode/json?address=` + data.address_line1.replaceAll(' ', '\+') + ',+' + data.city + ',+' + data.state + '+' + data.zipcode + '&key=' + process.env.API_KEY);
+    await axios({
+      url: `https://maps.googleapis.com/maps/api/geocode/json?address=` + data.address_line1.replaceAll(' ','\+') + '+' + data.city + '+' + data.state + '&key=' + process.env.API_KEY,
+      method: 'GET'
+    }).then(results => {
+      results.data.results[0].address_components.forEach(elem => {
+        if(elem.types.includes('neighborhood')){
+          res.status(200).json({neighborhood: elem.long_name});
+        } 
+      });
+    }).catch(err => {
+      res.status(404).json(err);
+    });
+  }).catch(err => {
+    res.status(404).json(err);
+  }); 
+});
+
+app.get('/get_reviews', (req, res) => {
+  const property_id = req.query.property_id;
+  const query = 'SELECT subject, description, rating FROM reviews WHERE property_id = $1;';
+
+  db.any(query, [property_id])
+  .then(data => {
+    res.status(200).json(data);
+  })
+  .catch(err => {
+    res.status(404).json(err);
+  });
+});
+
+app.post('/add_review', (req, res) => {
+  const username = req.query.username;
+  const subject = req.query.subject;
+  const description = req.query.description;
+  const rating = req.query.rating;
+  const query = 'INSERT INTO reviews (username, property_id, subject, description, rating) VALUES ($1, $2, $3, $4, $5) returning *;'
+
+  db.task(task => {
+    return task.batch([
+      task.one('SELECT property_id FROM users WHERE username = $1', [username]),
+    ]);
+  })
+  .then(data => {
+    db.any(query, [username,parseInt(data[0].property_id),subject,description,parseInt(rating)])
+    .then(res => {
+      res.status(200).json(res);
+    })
+    .catch(err => {
+      res.status(404).json(err);
+    });
+  })
+  .catch(err => {
+    res.status(404).json(err);
+  });
+});
 
 app.get('/welcome', (req, res) => {
     res.json({status: 'success', message: 'Welcome!'});
@@ -147,7 +215,6 @@ app.get("/logout", (req, res) => {
   req.session.destroy();
   res.render("pages/login");
 });
-
 
 const auth = (req, res, next) => {
   if (!req.session.user) {
