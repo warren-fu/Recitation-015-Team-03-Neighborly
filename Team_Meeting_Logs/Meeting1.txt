@@ -1,1 +1,14 @@
+4/12/23
 
+Weekly Meeting Responsibilities:
+1. Create an epic
+2. Create user stories
+3. Assign user stories
+4. Everyone is responsible for 4 commits throughout the week
+5. Merge to main line
+6. No bugs
+7. Release Notes
+8. Every week has one deliverable
+9. Make sure to comment code and make sure to update project board
+10. Descriptive user stories
+11. Make sure you have acceptance criteria set

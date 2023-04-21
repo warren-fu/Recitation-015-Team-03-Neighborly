@@ -180,27 +180,6 @@ app.get("/login", (req, res) => {
   return res.render("pages/login");
 });
 
-// app.post('/login', async (req, res) => {
-//   const pwInDB = await db.any('SELECT * FROM users WHERE users.username = $1', [req.body.username])
-//     .catch(function () {
-//       return res.render('pages/login', { message: 'Database request failed' });
-//     });
-//   if (pwInDB.length > 0) {
-//     const match = await bcrypt.compare(req.body.password, pwInDB[0].password);
-//     if (match) {
-      
-//       req.session.save();
-//       return res.redirect('/explore');
-//     }
-//     else {
-//       return res.render('pages/login', { message: 'Incorrect username or password' });
-//     }
-//   }
-//   else {
-//     return res.redirect('/register');
-//   }
-// });
-
 app.post("/login", (req, res) => {
   const username = req.body.username;
   const query = "select * from users where users.username = $1";
