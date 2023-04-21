@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS users (
 DROP TABLE IF EXISTS listing CASCADE;
 
 CREATE TABLE IF NOT EXISTS listing (
-  listing_id NUMERIC primary key,
+  listing_id SERIAL primary key,
   username VARCHAR(50) NOT NULL,
   property_id NUMERIC NOT NULL,
   price DECIMAL NOT NULL,
