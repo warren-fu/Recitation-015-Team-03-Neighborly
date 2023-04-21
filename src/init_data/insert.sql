@@ -1,5 +1,5 @@
 INSERT INTO users(username,first_name,last_name, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ( 'abcd','ab', 'cd', 1, 1, '$2b$10$a4qvrY8R6g.Z3SX/DfjyleN9RoX4PnXCGG226.h5rXIHmtzDPfd0i', 'a@b.com', 1111111111, 'male', '2000-02-22');
-INSERT INTO users(username,first_name,last_name, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ( 'will','ab', 'cd', 2, 1, '$2b$10$a4qvrY8R6g.Z3SX/DfjyleN9RoX4PnXCGG226.h5rXIHmtzDPfd0i', 'a@b.com', 1111111111, 'male', '2000-02-22');
+INSERT INTO users(username,first_name,last_name, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ( 'will','ab', 'cd', 2, 1, '$2y$10$3cK3fVwGuGzEvixqalB.Oeq8X2UNxctQBz2tGAlJUHW63xOt3eYnW', 'a@b.com', 1111111111, 'male', '2000-02-22');
 INSERT INTO users(username,first_name,last_name, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ( 'evan','ab', 'cd', 2, 1, '$2b$10$a4qvrY8R6g.Z3SX/DfjyleN9RoX4PnXCGG226.h5rXIHmtzDPfd0i', 'a@b.com', 1111111111, 'male', '2000-02-22');
 INSERT INTO users(username,first_name,last_name, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ( 'warren','ab', 'cd', 3, 1, '$2b$10$a4qvrY8R6g.Z3SX/DfjyleN9RoX4PnXCGG226.h5rXIHmtzDPfd0i', 'a@b.com', 1111111111, 'male', '2000-02-22');
 INSERT INTO users(username,first_name,last_name, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ( 'juno','ab', 'cd', 4, 1, '$2b$10$a4qvrY8R6g.Z3SX/DfjyleN9RoX4PnXCGG226.h5rXIHmtzDPfd0i', 'a@b.com', 1111111111, 'male', '2000-02-22');
@@ -11,3 +11,7 @@ INSERT INTO properties (property_id, neighborhood_id, address_line1, address_lin
 INSERT INTO properties (property_id, neighborhood_id, address_line1, address_line2, city, state, zipcode) VALUES (3, 1, '3400 MADISON AVE', NULL, 'Boulder', 'CO', 80303);
 INSERT INTO properties (property_id, neighborhood_id, address_line1, address_line2, city, state, zipcode) VALUES (4, 1, '3300 BLUFF ST', NULL, 'Boulder', 'CO', 80301);
 INSERT INTO properties (property_id, neighborhood_id, address_line1, address_line2, city, state, zipcode) VALUES (5, 1, '1300 5TH ST', NULL, 'Boulder', 'CO', 80302);
+
+INSERT INTO listing (listing_id, username, property_id, price, description) VALUES (1,'will', 1, 800, 'Great place to live!');
+INSERT INTO listing (listing_id, username, property_id, price, description) VALUES (2,'warren', 2, 900, 'Awesome place to live!');
+INSERT INTO listing (listing_id, username, property_id, price, description) VALUES (3,'juno', 3, 1200, 'Sweet place to live!');

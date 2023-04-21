@@ -70,11 +70,14 @@ app.use(
     extended: true,
   })
 );
+
+app.use('/public', express.static('public'));
 // *****************************************************
 // <!-- Section 4 : API Routes -->
 // *****************************************************
 
 // TODO - Include your API routes here
+
 app.get("/get_user", (req, res) => {
   const query = 'SELECT * FROM users WHERE username = $1;';
 
@@ -144,14 +147,19 @@ app.post('/add_review', (req, res) => {
   });
 });
 
-app.get('/welcome', (req, res) => {
-    res.json({status: 'success', message: 'Welcome!'});
+app.get('/get_listings', (req, res) => {
+  const query = 'SELECT list.listing_id, prop.address_line1, prop.city, prop.state, prop.zipcode FROM listing AS list LEFT JOIN properties AS prop ON list.property_id = prop.property_id;';
+
+  db.any(query)
+  .then(data => {
+    res.status(200).json(data);
+  })
+  .catch(err => {
+    res.status(404).json(err);
   });
+});
 
 // TODO - Login and Register
-app.get('/', (req, res) => {
-  return res.redirect('/login');
-});
 
 app.get('/register', (req, res) => {
   return res.render('pages/register');
@@ -218,10 +226,63 @@ const auth = (req, res, next) => {
 
 app.use(auth);
 
+//TODO - API Calls you need to be logged in for
+
+app.get('/get_userAddress', (req, res) => {
+  const query = 'SELECT prop.address_line1, prop.city, prop.state, prop.zipcode FROM users JOIN properties AS prop ON prop.property_id = users.property_id WHERE users.username = $1;';
+
+  db.any(query, [user.username])
+  .then(data => {
+    res.status(200).json(data);
+  })
+  .catch(err => {
+    res.status(404).json(err);
+  });
+});
+
 //TODO - Everything that you need to be logged in for
 
 app.get('/explore', (req, res) => {
-  res.render('pages/explore', {username: req.session.user.username});
+  const query = 'SELECT list.listing_id, prop.address_line1, list.price, list.description FROM listing AS list LEFT JOIN properties AS prop ON list.property_id = prop.property_id;';
+
+  db.any(query)
+  .then(data => {
+    res.render('pages/explore', {
+      fixed_navbar: true,
+      username: req.session.user.username,
+      api_key: process.env.API_KEY,
+      listings: data
+    });
+  })
+  .catch(err => {
+    res.render('pages/explore', {
+      fixed_navbar: true,
+      username: req.session.user.username,
+      api_key: process.env.API_KEY,
+      listings: [{
+        listing_id: null,
+        address_line1: 'Error',
+        price: null,
+        description: 'Error'
+      }],
+      message: err
+    });
+  });
+  
+});
+
+app.get('/profile', (req, res) => {
+  res.render('pages/profile', {
+    fixed_navbar: false,
+    username: req.session.user.username
+  });
+});
+
+app.get('/feed', (req, res) => {
+  res.render('pages/feed', {
+    fixed_navbar: false,
+    username: req.session.user.username
+  });
 });
 
 app.get("/logout", (req, res) => {
