@@ -2,11 +2,13 @@ DROP TABLE IF EXISTS users CASCADE;
 
 CREATE TABLE IF NOT EXISTS users (
   username VARCHAR(50) PRIMARY KEY,
+  first_name VARCHAR(50) NOT NULL,
+  last_name VARCHAR(50) NOT NULL,
   property_id NUMERIC,
   status_id NUMERIC,
   password VARCHAR(60) NOT NULL,
   email VARCHAR(60) NOT NULL,
-  phone_number NUMERIC,
+  phone_number VARCHAR(60),
   gender VARCHAR(60),
   birthdate DATE
 );
