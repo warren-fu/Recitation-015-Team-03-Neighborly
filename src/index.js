@@ -14,7 +14,15 @@ const { json } = require('body-parser');
 
 const user = {
   username: undefined,
+  property_id: undefined,
+  status_id: undefined,
   password: undefined,
+  first_name: undefined, 
+  last_name: undefined, 
+  email: undefined, 
+  phone_number: undefined,
+  gender: undefined,
+  birthdate: undefined
 }
 // *****************************************************
 // <!-- Section 2 : Connect to DB -->
@@ -151,29 +159,20 @@ app.get('/register', (req, res) => {
 
 // Register
 app.post('/register', async (req, res) => {
+  const { first_name, last_name, email, username, password, confirm_password, phone_number, gender, birthdate } = req.body;
+  if(password != confirm_password) {
+    return res.render('pages/register', {error: 'danger', message: 'Passwords do not match' });
+  }
   //hash the password using bcrypt library
-  const hash = await bcrypt.hash(req.body.password, 10);
-  // set property and status ids to null or zero
-  const propertyID = 0;
-  const statusID = 0;
-
-  const query = "INSERT INTO users (username, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
-
-  db.any(query, [
-    req.body.username,
-    propertyID,
-    statusID,
-    hash,
-    req.body.email,
-    req.body.phone_number,
-    req.body.gender,
-    req.body.birthdate,
-  ])
-    .then(function () {
+  const hash = await bcrypt.hash(password, 10);
+  // To-DO: Insert username and hashed password into 'users' table
+  const query = "INSERT INTO users (username, first_name, last_name, property_id, status_id, password, email, phone_number, gender, birthdate) VALUES ($1, $2, $3, NULL, NULL, $4, $5, $6, $7, $8) returning *;";
+  db.any(query, [username, first_name, last_name, hash, email, phone_number, gender, birthdate])
+    .then(data => {
       return res.redirect('/login');
     })
     .catch(function () {
-      return res.render('pages/register', { message: 'This account has already been registered' });
+      return res.render('pages/register', {error: 'danger', message: 'This account has already been registered' });
     });
 });
 
@@ -181,28 +180,33 @@ app.get("/login", (req, res) => {
   return res.render("pages/login");
 });
 
-app.post('/login', async (req, res) => {
-  const pwInDB = await db.any('SELECT * FROM users WHERE users.username = $1', [
-    req.body.username])
-    .catch(function () {
-      return res.render('pages/login', { message: 'Database request failed' });
-    });
-  if (pwInDB.length > 0) {
-    const match = await bcrypt.compare(req.body.password, pwInDB[0].password);
-    if (match) {
-      req.session.user = {
-        api_key: process.env.API_KEY,
-      };
+app.post("/login", (req, res) => {
+  const username = req.body.username;
+  const query = "select * from users where users.username = $1";
+
+  // get the student_id based on the emailid
+  db.one(query, [username])
+    .then((data) => {
+      user.username = data.username;
+      user.property_id = data.property_id;
+      user.status_id = data.status_id;
+      user.password = data.password;
+      user.first_name= data.first_name; 
+      user.last_name = data.last_name;
+      user.email = data.email;
+      user.phone_number = data.phone_number;
+      user.gender = data.gender;
+      user.birthdate = data.gender;
+
+      req.session.user = user;
       req.session.save();
-      return res.redirect('/explore');
-    }
-    else {
-      return res.render('pages/login', { message: 'Incorrect username or password' });
-    }
-  }
-  else {
-    return res.redirect('/register');
-  }
+
+      res.redirect("/explore");
+    })
+    .catch((err) => {
+      console.log(err);
+      res.redirect("/login");
+    });
 });
 
 const auth = (req, res, next) => {
@@ -216,7 +220,14 @@ app.use(auth);
 
 //TODO - Everything that you need to be logged in for
 
-app.get('/explore')
+app.get('/explore', (req, res) => {
+  res.render('pages/explore', {username: req.session.user.username});
+});
+
+app.get("/logout", (req, res) => {
+  req.session.destroy();
+  res.redirect("pages/login");
+});
 // *****************************************************
 // <!-- Section 5 : Start Server-->
 // *****************************************************

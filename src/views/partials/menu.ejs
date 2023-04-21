@@ -26,8 +26,14 @@
               <a class="nav-link" href="/profile">Profile</a>
             </li>
           </ul>
-          <div class="nav-item me-1">
-                <a class="nav-link" href="/logout">Logout</a>
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <%- locals.username %>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/profile">Profile</a>
+              <a class="dropdown-item" href="/logout">Logout</a>
+            </div>
           </div>
         </div>
       </div>
