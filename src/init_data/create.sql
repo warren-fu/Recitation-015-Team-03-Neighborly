@@ -100,9 +100,10 @@ DROP TABLE IF EXISTS posts CASCADE;
 
 CREATE TABLE IF NOT EXISTS posts (
   post_id SERIAL primary key,
+  datetime TIMESTAMP NOT NULL,
   username VARCHAR(50) NOT NULL,
   neighborhood_id NUMERIC NOT NULL,
   subject VARCHAR(690) NOT NULL,
   description VARCHAR(65535) NOT NULL,
-  upvotes NUMERIC NOT NULL
+  votes NUMERIC NOT NULL
 );

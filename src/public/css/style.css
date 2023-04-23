@@ -17,3 +17,15 @@
     overflow: scroll;
     height: 70vh;
 }
+
+.comments:hover {
+    fill: #1b89e3;
+}
+
+.upvotes:hover{
+    fill: #2fc43e;
+}
+
+.downvotes:hover {
+    fill: #c4322f;
+}
