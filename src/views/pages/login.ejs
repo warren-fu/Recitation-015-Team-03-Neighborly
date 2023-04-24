@@ -1,20 +1,32 @@
 <%- include ('../partials/head') %>
-<%- include ('../partials/menu') %>
-
-<main>
-    <div class="container">
-      <!-- THE REST OF YOUR HTML CODE GOES HERE -->
-      <h1>Login</h1>
-      <form action="/login" method="POST">
-          <label for="username">Username:</label>
-          <input type="text" id="username" name="username" />
-    
-          <label for="password">Password:</label>
-          <input type="password" id="password" name="password" />
-          <a href="/register">Already Have an Account? Register</a>
-          <input type="submit" value="Login" />
-        </form>
+<%- include ('../partials/message') %>
+  <div class="d-flex align-items-center" style="height: 100vh;">
+    <div class="container" >
+      <div class="row justify-content-center">
+        <div class="col-lg-4 col-md-6 col-sm-8">
+          <div class="card shadow-lg">
+            <div class="card-body">
+              <h5 class="card-title text-center mb-4">Login</h5>
+              <form action="/login" method="POST">
+                <div class="form-floating mb-3">
+                  <input type="username" class="form-control" id="username" placeholder="Username" name="username">
+                  <label for="username">Username</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+                  <label for="password">Password</label>
+                </div>
+                <div class="form-check mb-3">
+                    <a href="/register">Already Have an Account? Register</a>
+                </div>
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary">Sign in</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </main>
-
+  </div>
 <%- include ('../partials/footer') %>
