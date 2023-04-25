@@ -181,6 +181,10 @@ app.get("/login", (req, res) => {
   return res.render("pages/login");
 });
 
+app.get("/feed", (req, res) => {
+  return res.render("pages/feed");
+});
+
 app.post('/login', async (req, res) => {
   const pwInDB = await db.any('SELECT * FROM users WHERE users.username = $1', [
     req.body.username])
@@ -194,7 +198,7 @@ app.post('/login', async (req, res) => {
         api_key: process.env.API_KEY,
       };
       req.session.save();
-      return res.redirect('/discover');
+      return res.redirect('/explore');
     }
     else {
       return res.render('pages/login', { message: 'Incorrect username or password' });
