@@ -1,67 +1,137 @@
 <%- include ('../partials/head') %>
-<%- include ('../partials/menu') %>
-<main>
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-    <div class="container bootdey">
-    <div class="col-md-12 bootstrap snippets">
-    <div class="panel">
-    <div class="panel-body">
-        <textarea class="form-control" rows="2" placeholder="What are you thinking?"></textarea>
-        <div class="mar-top clearfix">
-        <button class="btn btn-sm btn-primary pull-right" type="submit"><i class="fa fa-pencil fa-fw"></i> Share</button>
-        <a class="btn btn-trans btn-icon fa fa-video-camera add-tooltip" href="#"></a>
-        <a class="btn btn-trans btn-icon fa fa-camera add-tooltip" href="#"></a>
-        <a class="btn btn-trans btn-icon fa fa-file add-tooltip" href="#"></a>
-        </div>
-    </div>
-    </div>
-    <div class="panel">
-        <div class="panel-body">
-        <!-- Newsfeed Content -->
-        <!--===================================================-->
-        <div class="media-block">
-        <div class="media-body">
-            <div class="mar-btm">
-            <a href="#" class="btn-link text-semibold media-heading box-inline">user.username</a>
-            <p class="text-muted text-sm"><i class="fa fa-lg"></i> Neighborhood</p>
-            </div>
-            <strong>post.subject</strong>
-            <p>post.description</p>
-            <div class="pad-ver">
-            <div class="btn-group">
-                <a class="btn btn-sm btn-default btn-hover-success" href="#"><i class="fa fa-thumbs-up"></i></a>
-                <a class="btn btn-sm btn-default btn-hover-danger" href="#"><i class="fa fa-thumbs-down"></i></a>
-            </div>
-            <a class="btn btn-sm btn-default btn-hover-primary" href="#">Comment</a>
-            </div>
-            <hr>
-
-            <!-- Comments -->
-            <div>
-            <div class="media-block">
-                <div class="media-body">
-                <div class="mar-btm">
-                    <a href="#" class="btn-link text-semibold media-heading box-inline">user.username</a>
-                    <p class="text-muted text-sm"><i class="fa fa-lg"></i> Neighborhood</p>
-                </div>
-                <p>*This is a comment* needs to be offset to the left</p>
-                <div class="pad-ver">
-                    <div class="btn-group">
-                    <a class="btn btn-sm btn-default btn-hover-success active" href="#"><i class="fa fa-thumbs-up"></i></a>
-                    <a class="btn btn-sm btn-default btn-hover-danger" href="#"><i class="fa fa-thumbs-down"></i></a>
+    <%- include ('../partials/menu') %>
+        <%- include ('../partials/message') %>
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+            <script src="/public/js/script.js"></script>
+            <div class="d-flex align-items-center">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5 col-md-6 col-sm-12">
+                            <div class="d-flex flex-column">
+                                <div class="card mb-3 mt-3" style="width: 100%;">
+                                    <div class="card-body">
+                                        <form action="/feed" method="POST">
+                                            <div class="form-floating">
+                                                <textarea class="form-control mb-3" id="exampleFormControlTextarea1"
+                                                    rows="1" name="subject"></textarea>
+                                                <label for="exampleFormControlTextarea1">Subject</label>
+                                            </div>
+                                            <div class="form-floating">
+                                                <textarea class="form-control mb-3" id="exampleFormControlTextarea2"
+                                                    rows="5" style="height: 10rem" name="description"></textarea>
+                                                <label for="exampleFormControlTextarea1">Description</label>
+                                            </div>
+                                            <div class="d-flex">
+                                                <button type="submit" class="btn btn-primary mr-3">Post</button>
+                                                <!-- <div class="form-group">
+                <label for="exampleFormControlFile1">Example file input</label>
+                <input type="file" class="form-control-file" id="exampleFormControlFile1">
+            </div> -->
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <% locals.posts.forEach(post=> { %>
+                                    <div class="card mb-3" style="width: 100%;">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <p class="card-text text-secondary">
+                                                        <%- post.username %>
+                                                    </p>
+                                                </div>
+                                                <div class="col">
+                                                    <p class="card-text text-secondary text-right">Posted
+                                                        <% switch(true){ case Math.floor(Date.now()/3600000 - (new
+                                                            Date(post.datetime).getTime()/3600000))>= 24: %>
+                                                            <%- Math.floor(Date.now()/86400000 - (new
+                                                                Date(post.datetime).getTime()/86400000)) + ' days' %>
+                                                                <%; break; case Math.floor(Date.now()/60000 - (new
+                                                                    Date(post.datetime).getTime()/60000))>= 60: %>
+                                                                    <%- Math.floor(Date.now()/3600000 - (new
+                                                                        Date(post.datetime).getTime()/3600000))
+                                                                        + ' hours' %>
+                                                                        <%; break; case Math.floor(Date.now()/1000 -
+                                                                            (new Date(post.datetime).getTime()/1000))>=
+                                                                            60: %>
+                                                                            <%- Math.floor(Date.now()/60000 - (new
+                                                                                Date(post.datetime).getTime()/60000))
+                                                                                + ' minutes' %>
+                                                                                <%; break; default:%>
+                                                                                    <%- Math.floor(Date.now()/1000 -
+                                                                                        (new
+                                                                                        Date(post.datetime).getTime()/1000))
+                                                                                        + ' seconds' %>
+                                                                                        <%; break; } %> ago
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <h5 class="card-title">
+                                                <%- post.subject %>
+                                            </h5>
+                                            <p class="card-text">
+                                                <%- post.description %>
+                                            </p>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <button class="btn"
+                                                        onclick="loadReplies(&#39;reply-<%- post.post_id%>&#39;)">
+                                                        <svg class="comments" version="1.0" id="Layer_1"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            xmlns:xlink="http://www.w3.org/1999/xlink" width="25px"
+                                                            height="25px" viewBox="0 0 64 64"
+                                                            enable-background="new 0 0 64 64" xml:space="preserve">
+                                                            <g>
+                                                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                                                    fill="#231F20" d="M60,0H16c-2.211,0-4,1.789-4,4v4h38c3.438,0,6,2.656,6,6v22h4
+                                               c2.211,0,4-1.789,4-4V4C64,1.789,62.211,0,60,0z" />
+                                                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                                                    fill="#231F20"
+                                                                    d="M50,10H4c-2.211,0-4,1.789-4,4v30c0,2.211,1.789,4,4,4h7
+                                               c0.553,0,1,0.447,1,1v11c0,1.617,0.973,3.078,2.469,3.695C14.965,63.902,15.484,64,16,64c1.039,0,2.062-0.406,2.828-1.172
+                                               l14.156-14.156c0,0,0.516-0.672,1.672-0.672S50,48,50,48c2.211,0,4-1.789,4-4V14C54,11.791,52.209,10,50,10z M13,22h13
+                                               c0.553,0,1,0.447,1,1s-0.447,1-1,1H13c-0.553,0-1-0.447-1-1S12.447,22,13,22z M34,36H13c-0.553,0-1-0.447-1-1s0.447-1,1-1h21
+                                               c0.553,0,1,0.447,1,1S34.553,36,34,36z M41,30H13c-0.553,0-1-0.447-1-1s0.447-1,1-1h28c0.553,0,1,0.447,1,1S41.553,30,41,30z" />
+                                                            </g>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                <div class="col d-flex">
+                                                    <form action="/upvote?p=<%- post.post_id%>&v=<%- post.votes%>" method="POST">
+                                                        <button type="submit" class="btn">
+                                                            <a class="btn btn-sm btn-default btn-hover-success"><i class="fa fa-thumbs-up"></i></a>
+                                                        </button>
+                                                    </form>
+                                                    <p class="card-text text-secondary">
+                                                        <%- post.votes %>
+                                                    </p>
+                                                    <form action="/downvote?p=<%- post.post_id%>&v=<%- post.votes%>" method="POST">
+                                                        <button type="submit" class="btn">
+                                                            <a class="btn btn-sm btn-default btn-hover-success"><i class="fa fa-thumbs-down"></i></a>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="reply-<%- post.post_id %>" style="display:none;">
+                                            <ul class="list-group list-group-flush replies">
+                                                <li class="list-group-item">
+                                                    <form action="/reply" method="POST" class="d-flex">
+                                                        <input type="text" class="form-control mb-2 mr-2"
+                                                            id="inlineFormInputName2" placeholder="Reply">
+                                                        <button type="submit"
+                                                            class="btn btn-primary mb-2">Reply</button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+                        </div>
                     </div>
-                    <a class="btn btn-sm btn-default btn-hover-primary" href="#">Comment</a>
-                </div>
-                <hr>
                 </div>
             </div>
-
-            </div>
-        </div>
-        </div>
-    </div>
-    </div>
-    </div>
-    </div>
-</main>
-<%- include ('../partials/footer') %>
+            <%- include ('../partials/footer') %>

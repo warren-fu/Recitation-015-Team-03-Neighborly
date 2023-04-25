@@ -298,7 +298,7 @@ app.get('/profile', (req, res) => {
 // });
 
 app.get('/feed', (req, res) => {
-  const query = 'SELECT posts.username, posts.datetime, posts.post_id, posts.subject, posts.description, posts.votes FROM posts WHERE posts.neighborhood_id = $1 ORDER BY posts.datetime DESC;';
+  const query = 'SELECT posts.username, posts.datetime, posts.post_id, posts.subject, posts.description, posts.votes FROM posts;';
   const neighborhood_id_query = 'SELECT prop.neighborhood_id FROM properties AS prop JOIN users ON prop.property_id = users.property_id WHERE users.username = $1;';
 
   db.any(neighborhood_id_query, [user.username])
@@ -376,6 +376,46 @@ app.post('/feed', (req, res) => {
     });
 });
 
+app.post('/reply', (req, res) => {
+  const { reply } = req.body;
+  const query = 'INSERT INTO replies (username, reply_value) VALUES ($1, $2) returning *;';
+  const post_to_reply_query = 'INSERT INTO post_to_replies (post_id, reply_id) VALUES ($1, $2);';
+
+  db.any(query, [user.username, reply])
+    .then(data => {
+      db.any(post_to_reply_query, [data.reply_id, post_id])
+        .then(() => {
+          res.redirect('/feed');
+        })
+        .catch(() => {
+          res.render('pages/feed', {
+            fixed_navbar: false,
+            username: req.session.user.username,
+            error: 'danger',
+            message: 'Reply failed to upload',
+            posts: [{
+              subject: 'Error',
+              description: 'Error',
+              votes: 0
+            }]
+          });
+        });
+    })
+    .catch(err => {
+      res.render('pages/feed', {
+        fixed_navbar: false,
+        username: req.session.user.username,
+        error: 'danger',
+        message: 'Post failed to upload',
+        posts: [{
+          subject: 'Error',
+          description: 'Error',
+          votes: 0
+        }]
+      });
+    });
+});
+
 app.post('/upvote', (req, res) => {
   const pid = req.query.p;
   const curr_votes = req.query.v;
@@ -421,6 +461,8 @@ app.post('/downvote', (req, res) => {
     });
   })
 });
+
+
 
 app.get("/logout", (req, res) => {
   req.session.destroy();
