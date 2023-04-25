@@ -1,19 +1,72 @@
 <%- include ('../partials/head') %>
-<%- include ('../partials/menu') %>
-<main>
+<%- include ('../partials/message') %>
+<div class="d-flex align-items-center" style="height: 100vh;">
   <div class="container">
-    <!-- THE REST OF YOUR HTML CODE GOES HERE -->
-    <h1>Register</h1>
-    <form action="/register" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" />
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" />
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" />
-        <a href="/login">Already Have an Account? Login</a>
-        <input type="submit" value="Register" />
-      </form>
+    <div class="row justify-content-center">
+      <div class="col-lg-4 col-md-6 col-sm-8">
+        <div class="card shadow-lg">
+          <div class="card-body">
+            <h5 class="card-title text-center mb-4">Register</h5>
+            <form action="/register" method="POST">
+              <div class="row">
+                <div class="form-floating mb-3 col">
+                  <input type="first_name" class="form-control" id="first_name" placeholder="John"
+                    name="first_name">
+                  <label for="first_name">First Name</label>
+                </div>
+                <div class="form-floating mb-3 col">
+                  <input type="last_name" class="form-control" id="last_name" placeholder="Smith" name="last_name">
+                  <label for="last_name">Last Name</label>
+                </div>
+              </div>
+              <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="email" placeholder="Email" name="email"
+                  pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$">
+                <label for="email">Email</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input type="username" class="form-control" id="username" placeholder="Username" name="username">
+                <label for="username">Username</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+                <label for="password">Password</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="password" placeholder="Password"
+                  name="confirm_password">
+                <label for="confirm_password">Confirm Passowrd</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input type="tel" class="form-control" id="tel" placeholder="Password" name="phone_number"
+                  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
+                <label for="phone_number">Phone Number</label>
+              </div>
+              <div class="row">
+                <div class="form-floating mb-3 col">
+                  <select class="form-select" aria-label="Select Gender" name="gender">
+                    <option selected>Select Gender...</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="rather_not_say">Rather not say</option>
+                  </select>
+                </div>
+                <div class="form-floating mb-3 col">
+                  <input type="date" class="form-control" id="birthdate" placeholder="01/01/1999" name="birthdate">
+                  <label for="date">Birthdate</label>
+                </div>
+              </div>
+              <div class="form-check mb-3">
+                <a href="/login">Already have an account? Login</a>
+              </div>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Sign up</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</main>
+</div>
 <%- include ('../partials/footer') %>
