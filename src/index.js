@@ -206,7 +206,7 @@ app.post("/login", (req, res) => {
       user.email = data.email;
       user.phone_number = data.phone_number;
       user.gender = data.gender;
-      user.birthdate = data.gender;
+      user.birthdate = data.birthdate;
 
       req.session.user = user;
       req.session.save();
@@ -275,10 +275,27 @@ app.get('/explore', (req, res) => {
 
 app.get('/profile', (req, res) => {
   res.render('pages/profile', {
-    fixed_navbar: false,
-    username: req.session.user.username
+    fixed_navbar: true,
+    username: req.session.user.username,
+    first_name: req.session.user.first_name,
+    last_name: req.session.user.last_name,
+    email: req.session.user.email,
+    phone_number: req.session.user.phone_number,
+    gender: req.session.user.gender,
+    birthdate: req.session.user.birthdate,
+    status: req.session.user.status,
+    address_line1: '',
+    address_line2: '',
+    city: '',
+    state: '',
+    zipcode: ''
   });
 });
+
+//TODO Work on for recieving address data and place into the tables accordingly
+// app.post('/profile', (req,res) => {
+  
+// });
 
 app.get('/feed', (req, res) => {
   const query = 'SELECT posts.username, posts.datetime, posts.post_id, posts.subject, posts.description, posts.votes FROM posts WHERE posts.neighborhood_id = $1 ORDER BY posts.datetime DESC;';
