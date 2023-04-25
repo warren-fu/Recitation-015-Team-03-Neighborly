@@ -300,16 +300,26 @@ app.get('/profile', (req, res) => {
 app.get('/feed', (req, res) => {
   const query = 'SELECT posts.username, posts.datetime, posts.post_id, posts.subject, posts.description, posts.votes FROM posts;';
   const neighborhood_id_query = 'SELECT prop.neighborhood_id FROM properties AS prop JOIN users ON prop.property_id = users.property_id WHERE users.username = $1;';
+  const posts_to_replies_query = 'SELECT * FROM post_to_replies;';
+  const replies_query = 'SELECT * FROM replies;';
 
   db.any(neighborhood_id_query, [user.username])
   .then(data => {
     db.any(query, [parseInt(data.neighborhood_id)])
     .then(results => {
-      res.render('pages/feed', {
-        fixed_navbar: false,
-        username: req.session.user.username,
-        posts: results
-      });
+      db.any(posts_to_replies_query)
+      .then(results2 => {
+        db.any(replies_query)
+        .then(results3 => {
+          res.render('pages/feed', {
+            fixed_navbar: false,
+            username: req.session.user.username,
+            posts: results,
+            post_to_replies: results2,
+            replies: results3,
+          });
+        })
+      })
     })
     .catch(err => {
       res.render('pages/feed', {
@@ -394,7 +404,7 @@ app.post('/reply', (req, res) => {
             error: 'danger',
             message: 'Reply failed to upload',
             posts: [{
-              subject: 'Error',
+              subject: 'Error3',
               description: 'Error',
               votes: 0
             }]
@@ -408,13 +418,14 @@ app.post('/reply', (req, res) => {
         error: 'danger',
         message: 'Post failed to upload',
         posts: [{
-          subject: 'Error',
+          subject: 'Error4',
           description: 'Error',
           votes: 0
         }]
       });
     });
 });
+
 
 app.post('/upvote', (req, res) => {
   const pid = req.query.p;
