@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 DROP TABLE IF EXISTS user_to_listing CASCADE;
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS users_to_listing (
   username VARCHAR(50) NOT NULL,
   listing_id NUMERIC NOT NULL
 );
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS listing (
 DROP TABLE IF EXISTS properties CASCADE;
 
 CREATE TABLE IF NOT EXISTS properties (
-  property_id NUMERIC primary key,
+  property_id SERIAL primary key,
   neighborhood_id NUMERIC NOT NULL,
   address_line1 VARCHAR(150) NOT NULL,
   address_line2 VARCHAR(150),
@@ -100,9 +100,10 @@ DROP TABLE IF EXISTS posts CASCADE;
 
 CREATE TABLE IF NOT EXISTS posts (
   post_id SERIAL primary key,
+  datetime TIMESTAMP NOT NULL,
   username VARCHAR(50) NOT NULL,
   neighborhood_id NUMERIC NOT NULL,
   subject VARCHAR(690) NOT NULL,
   description VARCHAR(65535) NOT NULL,
-  upvotes NUMERIC NOT NULL
+  votes NUMERIC NOT NULL
 );

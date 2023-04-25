@@ -10,6 +10,8 @@ const session = require('express-session'); // To set the session object. To sto
 const bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
 const { json } = require('body-parser');
+const fs = require('fs');
+const busboy = require('connect-busboy');
 
 
 const user = {
@@ -17,9 +19,9 @@ const user = {
   property_id: undefined,
   status_id: undefined,
   password: undefined,
-  first_name: undefined, 
-  last_name: undefined, 
-  email: undefined, 
+  first_name: undefined,
+  last_name: undefined,
+  email: undefined,
   phone_number: undefined,
   gender: undefined,
   birthdate: undefined
@@ -92,20 +94,20 @@ app.get("/get_neighborhood", (req, res) => {
   db.one(query, [req.query.username]).then(async data => {
     console.log(`https://maps.googleapis.com/maps/api/geocode/json?address=` + data.address_line1.replaceAll(' ', '\+') + ',+' + data.city + ',+' + data.state + '+' + data.zipcode + '&key=' + process.env.API_KEY);
     await axios({
-      url: `https://maps.googleapis.com/maps/api/geocode/json?address=` + data.address_line1.replaceAll(' ','\+') + '+' + data.city + '+' + data.state + '&key=' + process.env.API_KEY,
+      url: `https://maps.googleapis.com/maps/api/geocode/json?address=` + data.address_line1.replaceAll(' ', '\+') + '+' + data.city + '+' + data.state + '&key=' + process.env.API_KEY,
       method: 'GET'
     }).then(results => {
       results.data.results[0].address_components.forEach(elem => {
-        if(elem.types.includes('neighborhood')){
-          res.status(200).json({neighborhood: elem.long_name});
-        } 
+        if (elem.types.includes('neighborhood')) {
+          res.status(200).json({ neighborhood: elem.long_name });
+        }
       });
     }).catch(err => {
       res.status(404).json(err);
     });
   }).catch(err => {
     res.status(404).json(err);
-  }); 
+  });
 });
 
 app.get('/get_reviews', (req, res) => {
@@ -113,12 +115,12 @@ app.get('/get_reviews', (req, res) => {
   const query = 'SELECT subject, description, rating FROM reviews WHERE property_id = $1;';
 
   db.any(query, [property_id])
-  .then(data => {
-    res.status(200).json(data);
-  })
-  .catch(err => {
-    res.status(404).json(err);
-  });
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(err => {
+      res.status(404).json(err);
+    });
 });
 
 app.post('/add_review', (req, res) => {
@@ -133,30 +135,30 @@ app.post('/add_review', (req, res) => {
       task.one('SELECT property_id FROM users WHERE username = $1', [username]),
     ]);
   })
-  .then(data => {
-    db.any(query, [username,parseInt(data[0].property_id),subject,description,parseInt(rating)])
-    .then(res => {
-      res.status(200).json(res);
+    .then(data => {
+      db.any(query, [username, parseInt(data[0].property_id), subject, description, parseInt(rating)])
+        .then(res => {
+          res.status(200).json(res);
+        })
+        .catch(err => {
+          res.status(404).json(err);
+        });
     })
     .catch(err => {
       res.status(404).json(err);
     });
-  })
-  .catch(err => {
-    res.status(404).json(err);
-  });
 });
 
 app.get('/get_listings', (req, res) => {
   const query = 'SELECT list.listing_id, prop.address_line1, prop.city, prop.state, prop.zipcode FROM listing AS list LEFT JOIN properties AS prop ON list.property_id = prop.property_id;';
 
   db.any(query)
-  .then(data => {
-    res.status(200).json(data);
-  })
-  .catch(err => {
-    res.status(404).json(err);
-  });
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(err => {
+      res.status(404).json(err);
+    });
 });
 
 // TODO - Login and Register
@@ -168,8 +170,8 @@ app.get('/register', (req, res) => {
 // Register
 app.post('/register', async (req, res) => {
   const { first_name, last_name, email, username, password, confirm_password, phone_number, gender, birthdate } = req.body;
-  if(password != confirm_password) {
-    return res.render('pages/register', {error: 'danger', message: 'Passwords do not match' });
+  if (password != confirm_password) {
+    return res.render('pages/register', { error: 'danger', message: 'Passwords do not match' });
   }
   //hash the password using bcrypt library
   const hash = await bcrypt.hash(password, 10);
@@ -180,7 +182,7 @@ app.post('/register', async (req, res) => {
       return res.redirect('/login');
     })
     .catch(function () {
-      return res.render('pages/register', {error: 'danger', message: 'This account has already been registered' });
+      return res.render('pages/register', { error: 'danger', message: 'This account has already been registered' });
     });
 });
 
@@ -199,12 +201,12 @@ app.post("/login", (req, res) => {
       user.property_id = data.property_id;
       user.status_id = data.status_id;
       user.password = data.password;
-      user.first_name= data.first_name; 
+      user.first_name = data.first_name;
       user.last_name = data.last_name;
       user.email = data.email;
       user.phone_number = data.phone_number;
       user.gender = data.gender;
-      user.birthdate = data.gender;
+      user.birthdate = data.birthdate;
 
       req.session.user = user;
       req.session.save();
@@ -232,12 +234,12 @@ app.get('/get_userAddress', (req, res) => {
   const query = 'SELECT prop.address_line1, prop.city, prop.state, prop.zipcode FROM users JOIN properties AS prop ON prop.property_id = users.property_id WHERE users.username = $1;';
 
   db.any(query, [user.username])
-  .then(data => {
-    res.status(200).json(data);
-  })
-  .catch(err => {
-    res.status(404).json(err);
-  });
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(err => {
+      res.status(404).json(err);
+    });
 });
 
 //TODO - Everything that you need to be logged in for
@@ -246,48 +248,183 @@ app.get('/explore', (req, res) => {
   const query = 'SELECT list.listing_id, prop.address_line1, list.price, list.description FROM listing AS list LEFT JOIN properties AS prop ON list.property_id = prop.property_id;';
 
   db.any(query)
-  .then(data => {
-    res.render('pages/explore', {
-      fixed_navbar: true,
-      username: req.session.user.username,
-      api_key: process.env.API_KEY,
-      listings: data
+    .then(data => {
+      res.render('pages/explore', {
+        fixed_navbar: true,
+        username: req.session.user.username,
+        api_key: process.env.API_KEY,
+        listings: data
+      });
+    })
+    .catch(err => {
+      res.render('pages/explore', {
+        fixed_navbar: true,
+        username: req.session.user.username,
+        api_key: process.env.API_KEY,
+        listings: [{
+          listing_id: null,
+          address_line1: 'Error',
+          price: null,
+          description: 'Error'
+        }],
+        message: err
+      });
     });
-  })
-  .catch(err => {
-    res.render('pages/explore', {
-      fixed_navbar: true,
-      username: req.session.user.username,
-      api_key: process.env.API_KEY,
-      listings: [{
-        listing_id: null,
-        address_line1: 'Error',
-        price: null,
-        description: 'Error'
-      }],
-      message: err
-    });
-  });
-  
+
 });
 
 app.get('/profile', (req, res) => {
   res.render('pages/profile', {
-    fixed_navbar: false,
-    username: req.session.user.username
+    fixed_navbar: true,
+    username: req.session.user.username,
+    first_name: req.session.user.first_name,
+    last_name: req.session.user.last_name,
+    email: req.session.user.email,
+    phone_number: req.session.user.phone_number,
+    gender: req.session.user.gender,
+    birthdate: req.session.user.birthdate,
+    status: req.session.user.status,
+    address_line1: '',
+    address_line2: '',
+    city: '',
+    state: '',
+    zipcode: ''
   });
 });
 
+//TODO Work on for recieving address data and place into the tables accordingly
+// app.post('/profile', (req,res) => {
+  
+// });
+
 app.get('/feed', (req, res) => {
-  res.render('pages/feed', {
-    fixed_navbar: false,
-    username: req.session.user.username
+  const query = 'SELECT posts.username, posts.datetime, posts.post_id, posts.subject, posts.description, posts.votes FROM posts WHERE posts.neighborhood_id = $1 ORDER BY posts.datetime DESC;';
+  const neighborhood_id_query = 'SELECT prop.neighborhood_id FROM properties AS prop JOIN users ON prop.property_id = users.property_id WHERE users.username = $1;';
+
+  db.any(neighborhood_id_query, [user.username])
+  .then(data => {
+    db.any(query, [parseInt(data.neighborhood_id)])
+    .then(results => {
+      res.render('pages/feed', {
+        fixed_navbar: false,
+        username: req.session.user.username,
+        posts: results
+      });
+    })
+    .catch(err => {
+      res.render('pages/feed', {
+        fixed_navbar: false,
+        username: req.session.user.username,
+        posts: [{
+          subject: 'Error',
+          description: 'Error',
+          votes: 0
+        }]
+      });
+    });
+  })
+  .catch(err => {
+    res.render('pages/feed', {
+      fixed_navbar: false,
+      username: req.session.user.username,
+      posts: [{
+        subject: 'Error',
+        description: 'Error',
+        votes: 0
+      }]
+    });
   });
+});
+
+app.post('/feed', (req, res) => {
+  const { subject, description } = req.body;
+  const query = 'INSERT INTO posts(datetime, username, neighborhood_id, subject, description, votes) VALUES (to_timestamp($1 / 1000.0), $2, $3, $4, $5, $6) returning *;';
+  const neighborhood_id_query = 'SELECT prop.neighborhood_id FROM properties AS prop JOIN users ON prop.property_id = users.property_id WHERE users.username = $1;';
+
+  db.any(neighborhood_id_query, [user.username])
+    .then(data => {
+      db.any(query, [Date.now() ,user.username, parseInt(data.neighborhood_id), subject, description, 0])
+        .then(() => {
+          res.redirect('/feed');
+        })
+        .catch(() => {
+          res.render('pages/feed', {
+            fixed_navbar: false,
+            username: req.session.user.username,
+            error: 'danger',
+            message: 'Post failed to upload',
+            posts: [{
+              subject: 'Error',
+              description: 'Error',
+              votes: 0
+            }]
+          });
+        });
+    })
+    .catch(err => {
+      res.render('pages/feed', {
+        fixed_navbar: false,
+        username: req.session.user.username,
+        error: 'danger',
+        message: 'Post failed to upload',
+        posts: [{
+          subject: 'Error',
+          description: 'Error',
+          votes: 0
+        }]
+      });
+    });
+});
+
+app.post('/upvote', (req, res) => {
+  const pid = req.query.p;
+  const curr_votes = req.query.v;
+  const query = 'UPDATE posts SET votes = $1 WHERE post_id = $2 RETURNING *;';
+  db.any(query, [parseInt(curr_votes) + 1, parseInt(pid)])
+  .then(() => {
+    res.redirect("/feed");
+  })
+  .catch(err => {
+    res.render('pages/feed', {
+      fixed_navbar: false,
+      username: req.session.user.username,
+      error: 'danger',
+      message: 'Post failed to upload',
+      posts: [{
+        subject: 'Error',
+        description: 'Error',
+        votes: 0
+      }]
+    });
+  })
+});
+
+app.post('/downvote', (req, res) => {
+  const pid = req.query.p;
+  const curr_votes = req.query.v;
+  const query = 'UPDATE posts SET votes = $1 WHERE post_id = $2 RETURNING *;';
+  db.any(query, [parseInt(curr_votes) - 1, pid])
+  .then(() => {
+    res.redirect("/feed");
+  })
+  .catch(err => {
+    res.render('pages/feed', {
+      fixed_navbar: false,
+      username: req.session.user.username,
+      error: 'danger',
+      message: 'Post failed to upload',
+      posts: [{
+        subject: 'Error',
+        description: 'Error',
+        votes: 0
+      }]
+    });
+  })
 });
 
 app.get("/logout", (req, res) => {
   req.session.destroy();
-  res.redirect("pages/login");
+  res.redirect("/login");
 });
 // *****************************************************
 // <!-- Section 5 : Start Server-->
