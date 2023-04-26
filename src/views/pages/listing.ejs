@@ -1,5 +1,38 @@
-<%- include ('../partials/head') %>
-<%- include ('../partials/menu') %>
+<%- include ('../partials/head') %> <%- include ('../partials/menu') %>
 <main>
+  <div class="d-flex align-items-center" style="height: 100vh">
+    <div class="container">
+      <div class="row justify-content-center" top="50px">
+        <% var addr = data.address.line + ", " + data.address.city + ", " +
+        data.address.state_code; data.photos.forEach(photo => { %>
+        <!-- <div style="top:50px; position: absolute; padding-bottom: 56.25%; width: 75%"> -->
+        <img style="width: 25%; height: 25%" src="<%-photo.href%>" />
+        <!-- </div> -->
+
+        <% }); %>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col">
+          <h1><%-addr%></h1>
+        </div>
+        <div class="col">
+          <h1>Price: <%-data.price%></h1>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <h1>Description:</h1>
+        <p><%-data.description%></p>
+      </div>
+      <div class="row justify-content-center">
+        <h1>Features:</h1>
+        <a><%-data.prop_type%></a>
+        <a>Year Built: <%-data.year_built%></a>
+        <a>Size: <%-data.sqft%> sqft</a>
+        <%data.features.forEach(feature => { %>
+        <a><%-feature.text%></a>
+        <% }); %>
+      </div>
+    </div>
+  </div>
 </main>
 <%- include ('../partials/footer') %>
