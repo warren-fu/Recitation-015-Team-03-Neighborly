@@ -1,0 +1,5 @@
+4/26
+- redo project board, fix user story names and add acceptance criteria
+- add some way to add hobbies to user profile
+- add filter for hobbies in map
+- filter map by listings and hobbies
