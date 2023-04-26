@@ -5,15 +5,14 @@
 const express = require("express"); // To build an application server or API
 const app = express();
 
-const pgp = require('pg-promise')(); // To connect to the Postgres DB from the node server
-const bodyParser = require('body-parser');
-const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
-const bcrypt = require('bcrypt'); //  To hash passwords
-const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
-const { json } = require('body-parser');
-const fs = require('fs');
-const busboy = require('connect-busboy');
-
+const pgp = require("pg-promise")(); // To connect to the Postgres DB from the node server
+const bodyParser = require("body-parser");
+const session = require("express-session"); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
+const bcrypt = require("bcrypt"); //  To hash passwords
+const axios = require("axios"); // To make HTTP requests from our server. We'll learn more about it in Part B.
+const { json } = require("body-parser");
+const fs = require("fs");
+const busboy = require("connect-busboy");
 
 const user = {
   username: undefined,
@@ -706,7 +705,6 @@ app.post('/profile', (req,res) => {
           { error: 'danger', message: 'Invalid address has been inputed' });
   })
 });
-
 
 app.get("/feed", (req, res) => {
   const query =
