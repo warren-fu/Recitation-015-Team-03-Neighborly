@@ -15,3 +15,12 @@ INSERT INTO properties (property_id, neighborhood_id, address_line1, address_lin
 INSERT INTO listing (listing_id, username, property_id, price, description) VALUES (1,'will', 1, 800, 'Great place to live!');
 INSERT INTO listing (listing_id, username, property_id, price, description) VALUES (2,'warren', 2, 900, 'Awesome place to live!');
 INSERT INTO listing (listing_id, username, property_id, price, description) VALUES (3,'juno', 3, 1200, 'Sweet place to live!');
+
+INSERT INTO posts (datetime, username, neighborhood_id, subject, description, votes) VALUES ('2023-04-25 07:52:48.090 UTC', 'ryan', 1, 'Looking for Roomate!', 'Looking for roomate to sublease this summer, 120 S 34th St, $1200 a month', 0);
+INSERT INTO posts (datetime, username, neighborhood_id, subject, description, votes) VALUES ('2023-04-24 07:52:48.090 UTC', 'james', 1, 'Need a place to stay this summer', 'Looking to rent a place out this summer, if anyone has a spare room let me know', 0);
+
+INSERT INTO replies (username, reply_value) VALUES ('will', 'Im looking for a place to stay the summer');
+INSERT INTO replies (username, reply_value) VALUES ('evan', 'I am too if it is still available');
+
+INSERT INTO post_to_replies (post_id, reply_id) VALUES (1, 1);
+INSERT INTO post_to_replies (post_id, reply_id) VALUES (1, 2);
