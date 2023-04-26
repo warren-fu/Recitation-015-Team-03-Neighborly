@@ -40,6 +40,7 @@ async function initMap() {
     });
 }
 
+<<<<<<< HEAD
 async function loadReplies(str) {
     var x = document.getElementById(str);
     if (x.style.display === "none") {
@@ -81,3 +82,8 @@ function searchListings() {
       })
       .catch(error => console.error(error));
   }
+=======
+function reloadReplies(pid) {
+    $('.modal-content').load('/feed/p/' + pid);
+}
+>>>>>>> main

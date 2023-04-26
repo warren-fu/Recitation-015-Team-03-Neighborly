@@ -1,0 +1,18 @@
+4/20/2023
+  - Register added and working
+  - Login added and working
+  - Google maps API added to explore page
+  - Placeholder listings to the right of the map
+ 
+ 4/23/2023
+  - Added ability to view profile with correct data
+  - Ability to view the feed and add to it
+  
+ 4/24/2023
+  - Added search bar above the map to search for listings in a city
+  - The map disappears when the screen becomes too small as to make it friendly for mobile users
+ 
+ 4/25/2023
+  - Fixed Google maps API and replaced it with Bing maps API
+  - Centered the map
+  - Ability to view comments and make comments on posts
