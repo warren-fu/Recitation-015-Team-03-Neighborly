@@ -1,0 +1,29 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel"><%- locals.post.subject %></h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+    </button>
+</div>
+<div class="modal-body">
+    <p><%- locals.post.description %></p>
+    <hr/>
+    <form action="/reply/<%- locals.post.post_id %>" method="POST" onsubmit="reloadReplies(<%- locals.post.post_id %>)">
+        <div class="d-flex" style="align-items:center">
+            <textarea class="form-control mb-3" id="exampleFormControlTextarea1"
+                rows="1" name="value" required></textarea>
+            <button type="submit" class="btn btn-primary mr-3">Reply</button>
+        </div>
+    </form>
+    <div class="replies" style="height:18rem;overflow-x:scroll;">
+        <% if(locals.replies.length == 0){%>
+            <div class="d-flex justify-content-center">
+                <p class="text-secondary">No comments, leave the first one!</p>
+            </div>
+        <% } else { 
+            locals.replies.forEach(reply => { %>
+                <p class="text-secondary"><%- reply.username %></p>
+                <p><%- reply.reply_value %></p>
+                <hr/>
+            <% });
+        } %>
+    </div>
+</div>
