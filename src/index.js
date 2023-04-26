@@ -4,6 +4,17 @@
 
 const express = require("express"); // To build an application server or API
 const app = express();
+<<<<<<< HEAD
+const pgp = require('pg-promise')(); // To connect to the Postgres DB from the node server
+const bodyParser = require('body-parser');
+const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
+const bcrypt = require('bcrypt'); //  To hash passwords
+const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
+const { json } = require('body-parser');
+const fs = require('fs');
+const busboy = require('connect-busboy');
+
+=======
 const pgp = require("pg-promise")(); // To connect to the Postgres DB from the node server
 const bodyParser = require("body-parser");
 const session = require("express-session"); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
@@ -12,6 +23,7 @@ const axios = require("axios"); // To make HTTP requests from our server. We'll 
 const { json } = require("body-parser");
 const fs = require("fs");
 const busboy = require("connect-busboy");
+>>>>>>> main
 
 const user = {
   username: undefined,
@@ -92,46 +104,54 @@ app.get("/get_user", (req, res) => {
 });
 
 app.get("/get_neighborhood", (req, res) => {
-  db.one(query, [req.query.username])
-    .then(async (data) => {
-      console.log(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=` +
-          data.address_line1.replaceAll(" ", "+") +
-          ",+" +
-          data.city +
-          ",+" +
-          data.state +
-          "+" +
-          data.zipcode +
-          "&key=" +
-          process.env.API_KEY
-      );
-      await axios({
-        url:
-          `https://maps.googleapis.com/maps/api/geocode/json?address=` +
-          data.address_line1.replaceAll(" ", "+") +
-          "+" +
-          data.city +
-          "+" +
-          data.state +
-          "&key=" +
-          process.env.API_KEY,
-        method: "GET",
-      })
-        .then((results) => {
-          results.data.results[0].address_components.forEach((elem) => {
-            if (elem.types.includes("neighborhood")) {
-              res.status(200).json({ neighborhood: elem.long_name });
-            }
-          });
-        })
-        .catch((err) => {
-          res.status(404).json(err);
-        });
-    })
-    .catch((err) => {
+  db.one(query, [req.query.username]).then(async data => {
+    console.log(`https://maps.googleapis.com/maps/api/geocode/json?address=` + data.address_line1.replaceAll(' ', '\+') + ',+' + data.city + ',+' + data.state + '+' + data.zipcode + '&key=' + process.env.API_KEY);
+    await axios({
+      url: `https://maps.googleapis.com/maps/api/geocode/json?address=` + data.address_line1.replaceAll(' ', '\+') + '+' + data.city + '+' + data.state + '&key=' + process.env.API_KEY,
+      method: 'GET'
+    }).then(results => {
+      results.data.results[0].address_components.forEach(elem => {
+        if (elem.types.includes('neighborhood')) {
+          res.status(200).json({ neighborhood: elem.long_name });
+        }
+      });
+    }).catch(err => {
       res.status(404).json(err);
     });
+  }).catch(err => {
+    res.status(404).json(err);
+  });
+});
+
+app.get("/get_search", async (req, res) => {
+  const axios = require('axios');
+
+  const searchCity = req.query.city; // get the city from the query parameters
+
+  const options = {
+    method: 'GET',
+    url: 'https://realty-in-us.p.rapidapi.com/properties/v2/list-for-rent',
+    params: {
+      city: searchCity,
+      state_code: 'CA',
+      limit: '10',
+      offset: '0',
+      sort: 'relevance'
+    },
+    headers: {
+      'X-RapidAPI-Key': process.env.RapidAPI_Key,
+      'X-RapidAPI-Host': 'realty-in-us.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const response = await axios.request(options);
+    const listings = response.data.data;
+    res.send(listings); // send the listings data as the response
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal server error'); // return a 500 error if something goes wrong
+  }
 });
 
 app.get("/get_reviews", (req, res) => {
@@ -140,10 +160,10 @@ app.get("/get_reviews", (req, res) => {
     "SELECT subject, description, rating FROM reviews WHERE property_id = $1;";
 
   db.any(query, [property_id])
-    .then((data) => {
+    .then(data => {
       res.status(200).json(data);
     })
-    .catch((err) => {
+    .catch(err => {
       res.status(404).json(err);
     });
 });
