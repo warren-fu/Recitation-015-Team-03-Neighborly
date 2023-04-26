@@ -15,3 +15,4 @@
  4/25/2023
   - Fixed Google maps API and replaced it with Bing maps API
   - Centered the map
+  - Ability to view comments and make comments on posts
