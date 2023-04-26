@@ -206,7 +206,7 @@ app.post("/login", (req, res) => {
       user.email = data.email;
       user.phone_number = data.phone_number;
       user.gender = data.gender;
-      user.birthdate = data.gender;
+      user.birthdate = data.birthdate;
 
       req.session.user = user;
       req.session.save();
@@ -291,7 +291,8 @@ app.get('/feed', (req, res) => {
       res.render('pages/feed', {
         fixed_navbar: false,
         username: req.session.user.username,
-        posts: results
+        posts: results,
+        comments: null
       });
     })
     .catch(err => {
@@ -302,7 +303,8 @@ app.get('/feed', (req, res) => {
           subject: 'Error',
           description: 'Error',
           votes: 0
-        }]
+        }],
+        comments: null
       });
     });
   })
@@ -314,7 +316,8 @@ app.get('/feed', (req, res) => {
         subject: 'Error',
         description: 'Error',
         votes: 0
-      }]
+      }],
+      comments: null
     });
   });
 });
@@ -340,7 +343,8 @@ app.post('/feed', (req, res) => {
               subject: 'Error',
               description: 'Error',
               votes: 0
-            }]
+            }],
+            comments: null
           });
         });
     })
@@ -354,56 +358,54 @@ app.post('/feed', (req, res) => {
           subject: 'Error',
           description: 'Error',
           votes: 0
-        }]
+        }],
+        comments: null
       });
     });
 });
 
-app.post('/upvote', (req, res) => {
-  const pid = req.query.p;
-  const curr_votes = req.query.v;
-  const query = 'UPDATE posts SET votes = $1 WHERE post_id = $2 RETURNING *;';
-  db.any(query, [parseInt(curr_votes) + 1, parseInt(pid)])
-  .then(() => {
-    res.redirect("/feed");
+app.get('/feed/p/:pid', (req, res) => {
+  const post_id = req.params.pid;
+  const query_replies = "SELECT r.username, r.reply_value FROM replies AS r JOIN post_to_replies AS p_to_r ON r.reply_id = p_to_r.reply_id JOIN posts ON posts.post_id = p_to_r.post_id WHERE posts.post_id = $1;";
+  const query_post = "SELECT * FROM posts where post_id = $1;";
+
+  db.task(task => {
+    return task.batch([
+      task.any(query_replies, [post_id]),
+      task.one(query_post, [post_id])
+    ]);
   })
-  .catch(err => {
-    res.render('pages/feed', {
-      fixed_navbar: false,
-      username: req.session.user.username,
-      error: 'danger',
-      message: 'Post failed to upload',
-      posts: [{
-        subject: 'Error',
-        description: 'Error',
-        votes: 0
-      }]
+  .then(data => {
+    res.render('partials/post', {
+      replies: data[0],
+      post: data[1]
     });
   })
+  .catch(err => {
+    console.log(err);
+  });
 });
 
-app.post('/downvote', (req, res) => {
-  const pid = req.query.p;
-  const curr_votes = req.query.v;
-  const query = 'UPDATE posts SET votes = $1 WHERE post_id = $2 RETURNING *;';
-  db.any(query, [parseInt(curr_votes) - 1, pid])
-  .then(() => {
-    res.redirect("/feed");
+app.post('/reply/:pid', (req, res) => {
+  const value = req.body.value;
+  const pid = req.params.pid;
+  const query_replies = 'INSERT INTO replies (username, reply_value) VALUES ($1, $2) RETURNING *;';
+  const query_ptor = 'INSERT INTO post_to_replies (post_id, reply_id) VALUES ($1, $2) RETURNING *;';
+
+  db.one(query_replies, [user.username, value])
+  .then(data => {
+    db.one(query_ptor, [pid, data.reply_id])
+    .then(data => {
+      res.redirect('/feed');
+    })
+    .catch(err => {
+      res.end();
+    })
   })
   .catch(err => {
-    res.render('pages/feed', {
-      fixed_navbar: false,
-      username: req.session.user.username,
-      error: 'danger',
-      message: 'Post failed to upload',
-      posts: [{
-        subject: 'Error',
-        description: 'Error',
-        votes: 0
-      }]
-    });
-  })
-});
+    res.end();
+  });
+})
 
 app.get("/logout", (req, res) => {
   req.session.destroy();

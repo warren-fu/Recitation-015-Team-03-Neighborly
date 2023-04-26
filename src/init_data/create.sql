@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS neighborhood (
 DROP TABLE IF EXISTS replies CASCADE;
 
 CREATE TABLE IF NOT EXISTS replies (
-  reply_id NUMERIC primary key,
+  reply_id SERIAL primary key,
   username VARCHAR(50) NOT NULL,
   reply_value VARCHAR(10000) NOT NULL
 );

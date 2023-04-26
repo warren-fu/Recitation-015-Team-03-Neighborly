@@ -40,11 +40,6 @@ async function initMap() {
     });
 }
 
-async function loadReplies(str) {
-    var x = document.getElementById(str);
-    if (x.style.display === "none") {
-        x.style.display = "block";
-    } else {
-        x.style.display = "none";
-    }
+function reloadReplies(pid) {
+    $('.modal-content').load('/feed/p/' + pid);
 }
