@@ -1,6 +1,7 @@
 <%- include ('../partials/head') %>
     <%- include ('../partials/menu') %>
         <%- include ('../partials/message') %>
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
             <script src="/public/js/script.js"></script>
             <div class="d-flex justify-content-center">
                 <a class="nav-link active m-3" href="#">My Neighborhood</a>
@@ -86,7 +87,20 @@
                                         </div>
                                         <div class="card-body">
                                             <div class="row">
-                                                <div class="col">
+                                                <div class="btn-group">
+                                                    <form action="/upvote?p=<%- post.post_id%>&v=<%- post.votes%>" method="POST">
+                                                        <button type="submit" class="btn">
+                                                            <a class="btn btn-sm btn-default btn-hover-success"><i class="fa fa-thumbs-up"></i></a>
+                                                        </button>
+                                                    </form>
+                                                    <p class="card-text text-secondary">
+                                                        <%- post.votes %>
+                                                    </p>
+                                                    <form action="/downvote?p=<%- post.post_id%>&v=<%- post.votes%>" method="POST">
+                                                        <button type="submit" class="btn">
+                                                            <a class="btn btn-sm btn-default btn-hover-success"><i class="fa fa-thumbs-down"></i></a>
+                                                        </button>
+                                                    </form>
                                                     <a class="nav-link openBtn" data-url="/feed/p/<%- post.post_id %>"
                                                         data-bs-toggle="modal" data-bs-target="#exampleModal">View all
                                                         comments</a>

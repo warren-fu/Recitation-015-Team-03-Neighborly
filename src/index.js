@@ -764,6 +764,55 @@ app.post("/reply/:pid", (req, res) => {
     });
 });
 
+
+app.post('/upvote', (req, res) => {
+  const pid = req.query.p;
+  const curr_votes = req.query.v;
+  const query = 'UPDATE posts SET votes = $1 WHERE post_id = $2 RETURNING *;';
+  db.any(query, [parseInt(curr_votes) + 1, parseInt(pid)])
+  .then(() => {
+    res.redirect("/feed");
+  })
+  .catch(err => {
+    res.render('pages/feed', {
+      fixed_navbar: false,
+      username: req.session.user.username,
+      error: 'danger',
+      message: 'Post failed to upload',
+      posts: [{
+        subject: 'Error',
+        description: 'Error',
+        votes: 0
+      }]
+    });
+  })
+});
+
+app.post('/downvote', (req, res) => {
+  const pid = req.query.p;
+  const curr_votes = req.query.v;
+  const query = 'UPDATE posts SET votes = $1 WHERE post_id = $2 RETURNING *;';
+  db.any(query, [parseInt(curr_votes) - 1, pid])
+  .then(() => {
+    res.redirect("/feed");
+  })
+  .catch(err => {
+    res.render('pages/feed', {
+      fixed_navbar: false,
+      username: req.session.user.username,
+      error: 'danger',
+      message: 'Post failed to upload',
+      posts: [{
+        subject: 'Error',
+        description: 'Error',
+        votes: 0
+      }]
+    });
+  })
+});
+
+
+
 app.get("/logout", (req, res) => {
   req.session.destroy();
   res.redirect("/login");
