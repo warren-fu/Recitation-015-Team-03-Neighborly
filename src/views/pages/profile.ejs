@@ -44,8 +44,10 @@
       </table>
     </div>
 
-    <div class="col-lg-4">
-      <h2 class="mb-4">Add Your Property</h2>
+
+    <% if(address_line1 == ''){ %>
+      <div class="col-lg-4">
+      <h1 class="mb-4">Add Your Property</h1>
       <form action="/profile" method="POST">
         <div class="form-group">
           <label for="address_1">Address 1:</label>
@@ -72,9 +74,47 @@
           <input type="text" class="form-control" name="zip" id="zip" required>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-block">Save</button>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top: 10px;">Save</button>
       </form>
     </div>
+    <% }else{ %>
+      <div class="col-lg-4">
+        <h1 class="mb-4">Your Address</h1>
+        <table class="table table-bordered table-striped">
+          
+          <% if(address_line2){ %>
+            <tr>
+              <td>Address Line 1:</td>
+              <td><%= address_line1 %></td>
+            </tr>
+            <tr>
+              <td>Address Line 2:</td>
+              <td><%= address_line2 %></td>
+            </tr>
+          <% }else{ %>
+            <tr>
+              <td>Address Line:</td>
+              <td><%= address_line1 %></td>
+            </tr>
+          <% } %>
+          <tr>
+            <td>City:</td>
+            <td><%= city %></td>
+          </tr>
+          <tr>
+            <td>State:</td>
+            <td><%= state %></td>
+          </tr>
+          <tr>
+            <td>ZIP Code:</td>
+            <td><%= zipcode %></td>
+          </tr>
+        </table>
+      </div>
+    <% } %>
+
+  
+
   </div>
 </div>
 

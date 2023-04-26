@@ -274,28 +274,57 @@ app.get('/explore', (req, res) => {
 });
 
 app.get('/profile', (req, res) => {
-  res.render('pages/profile', {
-    fixed_navbar: true,
-    username: req.session.user.username,
-    first_name: req.session.user.first_name,
-    last_name: req.session.user.last_name,
-    email: req.session.user.email,
-    phone_number: req.session.user.phone_number,
-    gender: req.session.user.gender,
-    birthdate: req.session.user.birthdate,
-    status: req.session.user.status,
-    address_line1: '',
-    address_line2: '',
-    city: '',
-    state: '',
-    zipcode: ''
-  });
+
+  const query = 'SELECT prop.address_line1, prop.address_line2, prop.city, prop.state, prop.zipcode FROM users JOIN properties AS prop ON prop.property_id = users.property_id WHERE users.username = $1;';
+
+  db.oneOrNone(query, [req.session.user.username])
+      .then(data => {
+        if(data){
+          res.render('pages/profile', {
+            fixed_navbar: true,
+            username: req.session.user.username,
+            first_name: req.session.user.first_name,
+            last_name: req.session.user.last_name,
+            email: req.session.user.email,
+            phone_number: req.session.user.phone_number,
+            gender: req.session.user.gender,
+            birthdate: req.session.user.birthdate,
+            status: req.session.user.status,
+            address_line1: data.address_line1,
+            address_line2: data.address_line2,
+            city: data.city,
+            state: data.state,
+            zipcode: data.zipcode
+          });
+        }else{
+          res.render('pages/profile', {
+            fixed_navbar: true,
+            username: req.session.user.username,
+            first_name: req.session.user.first_name,
+            last_name: req.session.user.last_name,
+            email: req.session.user.email,
+            phone_number: req.session.user.phone_number,
+            gender: req.session.user.gender,
+            birthdate: req.session.user.birthdate,
+            status: req.session.user.status,
+            address_line1: '',
+            address_line2: '',
+            city: '',
+            state: '',
+            zipcode: ''
+          });
+        }
+      })
+      .catch(err => {
+        res.status(404).json(err);
+      });
+  
 });
 
 //TODO Work on for recieving address data and place into the tables accordingly
-// app.post('/profile', (req,res) => {
+app.post('/profile', (req,res) => {
   
-// });
+});
 
 app.get('/feed', (req, res) => {
   const query = 'SELECT posts.username, posts.datetime, posts.post_id, posts.subject, posts.description, posts.votes FROM posts WHERE posts.neighborhood_id = $1 ORDER BY posts.datetime DESC;';
