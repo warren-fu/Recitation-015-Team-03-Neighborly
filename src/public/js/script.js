@@ -48,3 +48,36 @@ async function loadReplies(str) {
         x.style.display = "none";
     }
 }
+
+function searchListings() {
+    const searchInput = document.getElementById('search-input');
+    const searchQuery = searchInput.value;
+    
+    fetch(`/listings?city=${searchQuery}`)
+      .then(response => response.json())
+      .then(listings => {
+        const listingsContainer = document.querySelector('.listings-container');
+        listingsContainer.innerHTML = '';
+        listings.forEach(listing => {
+          const listingHTML = `
+            <div id="${listing.listing_id}" class="card p-2 mb-3" style="width: 100%;">
+              <img class="card-img-top" src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Card image cap">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-9">
+                    <h5 class="card-title">${listing.address_line1}</h5>
+                  </div>
+                  <div class="col-3">
+                    <h5 class="card-title text-right">$${listing.price}</h5>
+                  </div>
+                </div>
+                <p class="card-text">${listing.description}</p>
+                <a href="/listing/${listing.listing_id}" class="btn btn-primary">Apply</a>
+              </div>
+            </div>
+          `;
+          listingsContainer.insertAdjacentHTML('beforeend', listingHTML);
+        });
+      })
+      .catch(error => console.error(error));
+  }

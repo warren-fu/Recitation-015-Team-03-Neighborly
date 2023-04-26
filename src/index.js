@@ -110,6 +110,37 @@ app.get("/get_neighborhood", (req, res) => {
   });
 });
 
+app.get("/get_search", async (req, res) => {
+  const axios = require('axios');
+
+  const searchCity = req.query.city; // get the city from the query parameters
+
+  const options = {
+    method: 'GET',
+    url: 'https://realty-in-us.p.rapidapi.com/properties/v2/list-for-rent',
+    params: {
+      city: searchCity,
+      state_code: 'CA',
+      limit: '10',
+      offset: '0',
+      sort: 'relevance'
+    },
+    headers: {
+      'X-RapidAPI-Key': process.env.RapidAPI_Key,
+      'X-RapidAPI-Host': 'realty-in-us.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const response = await axios.request(options);
+    const listings = response.data.data;
+    res.send(listings); // send the listings data as the response
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal server error'); // return a 500 error if something goes wrong
+  }
+});
+
 app.get('/get_reviews', (req, res) => {
   const property_id = req.query.property_id;
   const query = 'SELECT subject, description, rating FROM reviews WHERE property_id = $1;';
@@ -294,7 +325,7 @@ app.get('/profile', (req, res) => {
 
 //TODO Work on for recieving address data and place into the tables accordingly
 // app.post('/profile', (req,res) => {
-  
+
 // });
 
 app.get('/feed', (req, res) => {
@@ -302,14 +333,26 @@ app.get('/feed', (req, res) => {
   const neighborhood_id_query = 'SELECT prop.neighborhood_id FROM properties AS prop JOIN users ON prop.property_id = users.property_id WHERE users.username = $1;';
 
   db.any(neighborhood_id_query, [user.username])
-  .then(data => {
-    db.any(query, [parseInt(data.neighborhood_id)])
-    .then(results => {
-      res.render('pages/feed', {
-        fixed_navbar: false,
-        username: req.session.user.username,
-        posts: results
-      });
+    .then(data => {
+      db.any(query, [parseInt(data.neighborhood_id)])
+        .then(results => {
+          res.render('pages/feed', {
+            fixed_navbar: false,
+            username: req.session.user.username,
+            posts: results
+          });
+        })
+        .catch(err => {
+          res.render('pages/feed', {
+            fixed_navbar: false,
+            username: req.session.user.username,
+            posts: [{
+              subject: 'Error',
+              description: 'Error',
+              votes: 0
+            }]
+          });
+        });
     })
     .catch(err => {
       res.render('pages/feed', {
@@ -322,18 +365,6 @@ app.get('/feed', (req, res) => {
         }]
       });
     });
-  })
-  .catch(err => {
-    res.render('pages/feed', {
-      fixed_navbar: false,
-      username: req.session.user.username,
-      posts: [{
-        subject: 'Error',
-        description: 'Error',
-        votes: 0
-      }]
-    });
-  });
 });
 
 app.post('/feed', (req, res) => {
@@ -343,7 +374,7 @@ app.post('/feed', (req, res) => {
 
   db.any(neighborhood_id_query, [user.username])
     .then(data => {
-      db.any(query, [Date.now() ,user.username, parseInt(data.neighborhood_id), subject, description, 0])
+      db.any(query, [Date.now(), user.username, parseInt(data.neighborhood_id), subject, description, 0])
         .then(() => {
           res.redirect('/feed');
         })
@@ -381,22 +412,22 @@ app.post('/upvote', (req, res) => {
   const curr_votes = req.query.v;
   const query = 'UPDATE posts SET votes = $1 WHERE post_id = $2 RETURNING *;';
   db.any(query, [parseInt(curr_votes) + 1, parseInt(pid)])
-  .then(() => {
-    res.redirect("/feed");
-  })
-  .catch(err => {
-    res.render('pages/feed', {
-      fixed_navbar: false,
-      username: req.session.user.username,
-      error: 'danger',
-      message: 'Post failed to upload',
-      posts: [{
-        subject: 'Error',
-        description: 'Error',
-        votes: 0
-      }]
-    });
-  })
+    .then(() => {
+      res.redirect("/feed");
+    })
+    .catch(err => {
+      res.render('pages/feed', {
+        fixed_navbar: false,
+        username: req.session.user.username,
+        error: 'danger',
+        message: 'Post failed to upload',
+        posts: [{
+          subject: 'Error',
+          description: 'Error',
+          votes: 0
+        }]
+      });
+    })
 });
 
 app.post('/downvote', (req, res) => {
@@ -404,22 +435,22 @@ app.post('/downvote', (req, res) => {
   const curr_votes = req.query.v;
   const query = 'UPDATE posts SET votes = $1 WHERE post_id = $2 RETURNING *;';
   db.any(query, [parseInt(curr_votes) - 1, pid])
-  .then(() => {
-    res.redirect("/feed");
-  })
-  .catch(err => {
-    res.render('pages/feed', {
-      fixed_navbar: false,
-      username: req.session.user.username,
-      error: 'danger',
-      message: 'Post failed to upload',
-      posts: [{
-        subject: 'Error',
-        description: 'Error',
-        votes: 0
-      }]
-    });
-  })
+    .then(() => {
+      res.redirect("/feed");
+    })
+    .catch(err => {
+      res.render('pages/feed', {
+        fixed_navbar: false,
+        username: req.session.user.username,
+        error: 'danger',
+        message: 'Post failed to upload',
+        posts: [{
+          subject: 'Error',
+          description: 'Error',
+          votes: 0
+        }]
+      });
+    })
 });
 
 app.get("/logout", (req, res) => {
