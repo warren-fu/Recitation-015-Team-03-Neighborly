@@ -4,14 +4,16 @@
 
 const express = require("express"); // To build an application server or API
 const app = express();
-const pgp = require("pg-promise")(); // To connect to the Postgres DB from the node server
-const bodyParser = require("body-parser");
-const session = require("express-session"); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
-const bcrypt = require("bcrypt"); //  To hash passwords
-const axios = require("axios"); // To make HTTP requests from our server. We'll learn more about it in Part B.
-const { json } = require("body-parser");
-const fs = require("fs");
-const busboy = require("connect-busboy");
+
+const pgp = require('pg-promise')(); // To connect to the Postgres DB from the node server
+const bodyParser = require('body-parser');
+const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
+const bcrypt = require('bcrypt'); //  To hash passwords
+const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
+const { json } = require('body-parser');
+const fs = require('fs');
+const busboy = require('connect-busboy');
+
 
 const user = {
   username: undefined,
@@ -92,46 +94,54 @@ app.get("/get_user", (req, res) => {
 });
 
 app.get("/get_neighborhood", (req, res) => {
-  db.one(query, [req.query.username])
-    .then(async (data) => {
-      console.log(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=` +
-          data.address_line1.replaceAll(" ", "+") +
-          ",+" +
-          data.city +
-          ",+" +
-          data.state +
-          "+" +
-          data.zipcode +
-          "&key=" +
-          process.env.API_KEY
-      );
-      await axios({
-        url:
-          `https://maps.googleapis.com/maps/api/geocode/json?address=` +
-          data.address_line1.replaceAll(" ", "+") +
-          "+" +
-          data.city +
-          "+" +
-          data.state +
-          "&key=" +
-          process.env.API_KEY,
-        method: "GET",
-      })
-        .then((results) => {
-          results.data.results[0].address_components.forEach((elem) => {
-            if (elem.types.includes("neighborhood")) {
-              res.status(200).json({ neighborhood: elem.long_name });
-            }
-          });
-        })
-        .catch((err) => {
-          res.status(404).json(err);
-        });
-    })
-    .catch((err) => {
+  db.one(query, [req.query.username]).then(async data => {
+    console.log(`https://maps.googleapis.com/maps/api/geocode/json?address=` + data.address_line1.replaceAll(' ', '\+') + ',+' + data.city + ',+' + data.state + '+' + data.zipcode + '&key=' + process.env.API_KEY);
+    await axios({
+      url: `https://maps.googleapis.com/maps/api/geocode/json?address=` + data.address_line1.replaceAll(' ', '\+') + '+' + data.city + '+' + data.state + '&key=' + process.env.API_KEY,
+      method: 'GET'
+    }).then(results => {
+      results.data.results[0].address_components.forEach(elem => {
+        if (elem.types.includes('neighborhood')) {
+          res.status(200).json({ neighborhood: elem.long_name });
+        }
+      });
+    }).catch(err => {
       res.status(404).json(err);
     });
+  }).catch(err => {
+    res.status(404).json(err);
+  });
+});
+
+app.get("/get_search", async (req, res) => {
+  const axios = require('axios');
+
+  const searchCity = req.query.city; // get the city from the query parameters
+
+  const options = {
+    method: 'GET',
+    url: 'https://realty-in-us.p.rapidapi.com/properties/v2/list-for-rent',
+    params: {
+      city: searchCity,
+      state_code: 'CA',
+      limit: '10',
+      offset: '0',
+      sort: 'relevance'
+    },
+    headers: {
+      'X-RapidAPI-Key': process.env.RapidAPI_Key,
+      'X-RapidAPI-Host': 'realty-in-us.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const response = await axios.request(options);
+    const listings = response.data.data;
+    res.send(listings); // send the listings data as the response
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal server error'); // return a 500 error if something goes wrong
+  }
 });
 
 app.get("/get_reviews", (req, res) => {
@@ -140,10 +150,10 @@ app.get("/get_reviews", (req, res) => {
     "SELECT subject, description, rating FROM reviews WHERE property_id = $1;";
 
   db.any(query, [property_id])
-    .then((data) => {
+    .then(data => {
       res.status(200).json(data);
     })
-    .catch((err) => {
+    .catch(err => {
       res.status(404).json(err);
     });
 });
@@ -600,6 +610,7 @@ app.get('/profile', (req, res) => {
         if(data){
           res.render('pages/profile', {
             fixed_navbar: true,
+            propertyId: req.session.user.property_id,
             username: req.session.user.username,
             first_name: req.session.user.first_name,
             last_name: req.session.user.last_name,
@@ -607,7 +618,7 @@ app.get('/profile', (req, res) => {
             phone_number: req.session.user.phone_number,
             gender: req.session.user.gender,
             birthdate: req.session.user.birthdate,
-            status: req.session.user.status,
+            status: req.session.user.status_id,
             address_line1: data.address_line1,
             address_line2: data.address_line2,
             city: data.city,
@@ -617,6 +628,7 @@ app.get('/profile', (req, res) => {
         }else{
           res.render('pages/profile', {
             fixed_navbar: true,
+            propertyId: req.session.user.property_id,
             username: req.session.user.username,
             first_name: req.session.user.first_name,
             last_name: req.session.user.last_name,
@@ -624,7 +636,7 @@ app.get('/profile', (req, res) => {
             phone_number: req.session.user.phone_number,
             gender: req.session.user.gender,
             birthdate: req.session.user.birthdate,
-            status: req.session.user.status,
+            status: req.session.user.status_id,
             address_line1: '',
             address_line2: '',
             city: '',
@@ -641,7 +653,58 @@ app.get('/profile', (req, res) => {
 
 //TODO Work on for recieving address data and place into the tables accordingly
 app.post('/profile', (req,res) => {
-  
+  // const userToListQuery = 'INSERT INTO ';
+  // const listingQuery = 'INSERT INTO listing (listing_id, username, property_id, price, description) VALUES ($1, $2, $3, $4, $5);';
+
+  const address1 = req.body.address_1;
+  const address2 = req.body.address_2;
+  const city = req.body.city;
+  const state = req.body.state;
+  const zip = req.body.zip;
+
+  const propertyQuery = 'INSERT INTO properties (property_id, neighborhood_id, address_line1, address_line2, city, state, zipcode) VALUES ($1, $2, $3, $4, $5, $6, $7);';
+  db.any(propertyQuery, [1234, 1, address1, address2, city, state, zip])
+  .then(data =>{
+    req.session.user.property_id = 1234;
+    console.log(req.session.user.property_id);
+    return res.render('pages/profile', {
+            fixed_navbar: true,
+            propertyId: req.session.user.property_id,
+            username: req.session.user.username,
+            first_name: req.session.user.first_name,
+            last_name: req.session.user.last_name,
+            email: req.session.user.email,
+            phone_number: req.session.user.phone_number,
+            gender: req.session.user.gender,
+            birthdate: req.session.user.birthdate,
+            status: req.session.user.status_id,
+            address_line1: address1,
+            address_line2: address2,
+            city: city,
+            state: state,
+            zipcode: zip
+          });
+  })
+  .catch(err =>{
+    return res.render('pages/profile', {
+            fixed_navbar: true,
+            propertyId: req.session.user.property_id,
+            username: req.session.user.username,
+            first_name: req.session.user.first_name,
+            last_name: req.session.user.last_name,
+            email: req.session.user.email,
+            phone_number: req.session.user.phone_number,
+            gender: req.session.user.gender,
+            birthdate: req.session.user.birthdate,
+            status: req.session.user.status_id,
+            address_line1: '',
+            address_line2: '',
+            city: '',
+            state: '',
+            zipcode: ''
+          }, 
+          { error: 'danger', message: 'Invalid address has been inputed' });
+  })
 });
 
 
