@@ -45,7 +45,7 @@
     </div>
 
 
-    <% if(address_line1 == ''){ %>
+    <% if(!propertyId){ %>
       <div class="col-lg-4">
       <h1 class="mb-4">Add Your Property</h1>
       <form action="/profile" method="POST">

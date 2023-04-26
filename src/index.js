@@ -282,6 +282,7 @@ app.get('/profile', (req, res) => {
         if(data){
           res.render('pages/profile', {
             fixed_navbar: true,
+            propertyId: req.session.user.property_id,
             username: req.session.user.username,
             first_name: req.session.user.first_name,
             last_name: req.session.user.last_name,
@@ -289,7 +290,7 @@ app.get('/profile', (req, res) => {
             phone_number: req.session.user.phone_number,
             gender: req.session.user.gender,
             birthdate: req.session.user.birthdate,
-            status: req.session.user.status,
+            status: req.session.user.status_id,
             address_line1: data.address_line1,
             address_line2: data.address_line2,
             city: data.city,
@@ -299,6 +300,7 @@ app.get('/profile', (req, res) => {
         }else{
           res.render('pages/profile', {
             fixed_navbar: true,
+            propertyId: req.session.user.property_id,
             username: req.session.user.username,
             first_name: req.session.user.first_name,
             last_name: req.session.user.last_name,
@@ -306,7 +308,7 @@ app.get('/profile', (req, res) => {
             phone_number: req.session.user.phone_number,
             gender: req.session.user.gender,
             birthdate: req.session.user.birthdate,
-            status: req.session.user.status,
+            status: req.session.user.status_id,
             address_line1: '',
             address_line2: '',
             city: '',
@@ -323,7 +325,58 @@ app.get('/profile', (req, res) => {
 
 //TODO Work on for recieving address data and place into the tables accordingly
 app.post('/profile', (req,res) => {
-  
+  // const userToListQuery = 'INSERT INTO ';
+  // const listingQuery = 'INSERT INTO listing (listing_id, username, property_id, price, description) VALUES ($1, $2, $3, $4, $5);';
+
+  const address1 = req.body.address_1;
+  const address2 = req.body.address_2;
+  const city = req.body.city;
+  const state = req.body.state;
+  const zip = req.body.zip;
+
+  const propertyQuery = 'INSERT INTO properties (property_id, neighborhood_id, address_line1, address_line2, city, state, zipcode) VALUES ($1, $2, $3, $4, $5, $6, $7);';
+  db.any(propertyQuery, [1234, 1, address1, address2, city, state, zip])
+  .then(data =>{
+    req.session.user.property_id = 1234;
+    console.log(req.session.user.property_id);
+    return res.render('pages/profile', {
+            fixed_navbar: true,
+            propertyId: req.session.user.property_id,
+            username: req.session.user.username,
+            first_name: req.session.user.first_name,
+            last_name: req.session.user.last_name,
+            email: req.session.user.email,
+            phone_number: req.session.user.phone_number,
+            gender: req.session.user.gender,
+            birthdate: req.session.user.birthdate,
+            status: req.session.user.status_id,
+            address_line1: address1,
+            address_line2: address2,
+            city: city,
+            state: state,
+            zipcode: zip
+          });
+  })
+  .catch(err =>{
+    return res.render('pages/profile', {
+            fixed_navbar: true,
+            propertyId: req.session.user.property_id,
+            username: req.session.user.username,
+            first_name: req.session.user.first_name,
+            last_name: req.session.user.last_name,
+            email: req.session.user.email,
+            phone_number: req.session.user.phone_number,
+            gender: req.session.user.gender,
+            birthdate: req.session.user.birthdate,
+            status: req.session.user.status_id,
+            address_line1: '',
+            address_line2: '',
+            city: '',
+            state: '',
+            zipcode: ''
+          }, 
+          { error: 'danger', message: 'Invalid address has been inputed' });
+  })
 });
 
 app.get('/feed', (req, res) => {
