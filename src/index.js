@@ -4,6 +4,7 @@
 
 const express = require("express"); // To build an application server or API
 const app = express();
+
 const pgp = require("pg-promise")(); // To connect to the Postgres DB from the node server
 const bodyParser = require("body-parser");
 const session = require("express-session"); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
