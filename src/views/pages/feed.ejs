@@ -97,32 +97,41 @@
                                         <div id="reply-<%- post.post_id %>" style="display:none;">
                                             <ul class="list-group list-group-flush replies">
                                                 <li class="list-group-item">
-                                                    <form action="/reply" method="POST" class="d-flex">
-                                                        <input type="text" class="form-control mb-2 mr-2"
-                                                            id="inlineFormInputName2" placeholder="Reply">
-                                                        <button type="submit"
-                                                            class="btn btn-primary mb-2">Reply</button>
+                                                    <form action="/reply" method="POST">
+                                                        <input type="hidden" id="post_id" name="post_id" value="<%- post.post_id %>" />
+                                                        <div class="form-floating">
+                                                            <textarea class="form-control mb-2 mr-2" id="exampleFormControlTextarea3"
+                                                                rows="1" style="height: 10rem" name="reply"></textarea>
+                                                            <label for="exampleFormControlTextarea1">Reply</label>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <button type="submit" class="btn btn-primary mb-2">Reply</button>
+                                                        </div>
                                                     </form>
-                                                    <% post_to_replies.forEach(idx=> { %>
-                                                        <% if (idx.post_id == post.post_id) { %>
-                                                            <% replies.forEach(reply=> { %>
-                                                                <% if (idx.reply_id == reply.reply_id ) { %>
-                                                                    <div class="card mb-3" style="width: 100%;">
-                                                                        <div class="card-body">
-                                                                            <div class="row">
-                                                                                <strong><%- reply.username %></strong>
-                                                                            </div>
-                                                                            <div class="row">
-                                                                                <div class="card-body">
-                                                                                    <%- reply.reply_value %>
+                                                    <div>
+                                                    <% if (post.subject != 'Error') { %>
+                                                        <% post_to_replies.forEach(idx=> { %>
+                                                            <% if (idx.post_id == post.post_id) { %>
+                                                                <% replies.forEach(reply=> { %>
+                                                                    <% if (idx.reply_id == reply.reply_id ) { %>
+                                                                        <div class="card mb-3" style="width: 100%;">
+                                                                            <div class="card-body">
+                                                                                <div class="row">
+                                                                                    <strong><%- reply.username %></strong>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="card-body">
+                                                                                        <%- reply.reply_value %>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                <% } %>
-                                                            <% }) %>
-                                                        <% } %>
-                                                    <% }) %>
+                                                                    <% } %>
+                                                                <% }) %>
+                                                            <% } %>
+                                                        <% }) %>
+                                                    <% } %>
+                                                    </div>
                                                 </li>
                                             </ul>
                                         </div>

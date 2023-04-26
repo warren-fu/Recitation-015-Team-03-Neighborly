@@ -316,7 +316,7 @@ app.get('/feed', (req, res) => {
             username: req.session.user.username,
             posts: results,
             post_to_replies: results2,
-            replies: results3,
+            replies: results3
           });
         })
       })
@@ -387,13 +387,13 @@ app.post('/feed', (req, res) => {
 });
 
 app.post('/reply', (req, res) => {
-  const { reply } = req.body;
-  const query = 'INSERT INTO replies (username, reply_value) VALUES ($1, $2) returning *;';
+  const { reply, post_id } = req.body;
+  const query = 'INSERT INTO replies (username, reply_value) VALUES ($1, $2) returning reply_id;';
   const post_to_reply_query = 'INSERT INTO post_to_replies (post_id, reply_id) VALUES ($1, $2);';
 
   db.any(query, [user.username, reply])
     .then(data => {
-      db.any(post_to_reply_query, [data.reply_id, post_id])
+      db.any(post_to_reply_query, [post_id, parseInt(data[0].reply_id)])
         .then(() => {
           res.redirect('/feed');
         })
@@ -404,9 +404,9 @@ app.post('/reply', (req, res) => {
             error: 'danger',
             message: 'Reply failed to upload',
             posts: [{
-              subject: 'Error3',
+              subject: 'Error',
               description: 'Error',
-              votes: 0
+              votes: 0,
             }]
           });
         });
@@ -416,11 +416,11 @@ app.post('/reply', (req, res) => {
         fixed_navbar: false,
         username: req.session.user.username,
         error: 'danger',
-        message: 'Post failed to upload',
+        message: 'Reply failed to upload',
         posts: [{
-          subject: 'Error4',
-          description: 'Error',
-          votes: 0
+          subject: 'Error',
+          description: err,
+          votes: 0,
         }]
       });
     });
