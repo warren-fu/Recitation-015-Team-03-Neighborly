@@ -6,7 +6,7 @@
 <div class="modal-body">
     <p><%- locals.post.description %></p>
     <hr/>
-    <form action="/reply/<%- locals.post.post_id %>" method="POST" onsubmit="reloadReplies(<%- locals.post.post_id %>)">
+    <form action="/reply/<%- locals.post.post_id %>" method="POST">
         <div class="d-flex" style="align-items:center">
             <textarea class="form-control mb-3" id="exampleFormControlTextarea1"
                 rows="1" name="value" required></textarea>
