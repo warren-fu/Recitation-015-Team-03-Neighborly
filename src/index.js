@@ -705,7 +705,6 @@ app.post('/profile', (req,res) => {
   })
 });
 
-
 app.get("/feed", (req, res) => {
   const query =
     "SELECT posts.username, posts.datetime, posts.post_id, posts.subject, posts.description, posts.votes FROM posts WHERE posts.neighborhood_id = $1 ORDER BY posts.datetime DESC;";
