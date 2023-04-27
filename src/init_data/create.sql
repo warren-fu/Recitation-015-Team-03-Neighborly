@@ -107,3 +107,13 @@ CREATE TABLE IF NOT EXISTS posts (
   description VARCHAR(65535) NOT NULL,
   votes NUMERIC NOT NULL
 );
+
+DROP TABLE IF EXISTS hobbies CASCADE;
+
+CREATE TABLE IF NOT EXISTS hobbies (
+  hobby_id SERIAL PRIMARY KEY,
+  username VARCHAR(50) NOT NULL,
+  education NUMERIC,
+  jobs NUMERIC,
+  hobby NUMERIC
+);
