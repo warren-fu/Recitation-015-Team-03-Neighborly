@@ -43,6 +43,20 @@
                         <% } %>
             </div>
         </div>
+        <div class="row">
+            <div class="col">
+                <!-- TODO: add a hobbies button and allow user to add hobbies to their profile -->
+                <form action="/addInterests" method="POST">
+                    <select name="education" aria-label="Select Education" class="form-select">
+                        <option selected>Select Education</option>
+                        <option value="1">High School</option>
+                        <option value="2">Undergraduate</option>
+                    </select>
+
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 <div class="modal fade" id="addressModal" tabindex="-1" role="dialog" aria-labelledby="addressModalLabel"

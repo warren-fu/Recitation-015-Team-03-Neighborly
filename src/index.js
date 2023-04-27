@@ -901,7 +901,18 @@ app.post('/downvote', (req, res) => {
   })
 });
 
+app.post('/addInterests', (req, res) => {
+  const username = req.session.user.username, education = req.body.education, job = req.body.job, hobby = req.body.hobby;
+  const query = 'INSERT INTO interests (username, education, job, hobby) VALUES ($1, $2, $3, $4) RETURNING interests_id;';
 
+  db.any(query, [username, education, job, hobby])
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.send(err);
+    });
+})
 
 app.get("/logout", (req, res) => {
   req.session.destroy();
