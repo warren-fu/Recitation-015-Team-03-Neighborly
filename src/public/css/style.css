@@ -1,18 +1,19 @@
-.openBtn:hover{
+.openBtn:hover {
     cursor: pointer;
 }
+
 .map-container {
     overflow: hidden;
     padding-bottom: 56.25%;
     position: relative;
     height: 70vh;
-    padding:0;
+    padding: 0;
 }
 
-#myMap{
+#myMap {
     left: 0;
     top: 0;
-    padding:0;
+    padding: 0;
     height: 100%;
     width: 100%;
 }
@@ -26,7 +27,7 @@
     fill: #1b89e3;
 }
 
-.upvotes:hover{
+.upvotes:hover {
     fill: #2fc43e;
 }
 
@@ -94,4 +95,14 @@ input:checked+.slider:before {
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+.carousel-item img {
+    object-fit: contain;
+}
+
+.carousel {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
 }
