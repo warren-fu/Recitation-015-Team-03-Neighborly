@@ -1,3 +1,6 @@
+.openBtn:hover{
+    cursor: pointer;
+}
 .map-container {
     overflow: hidden;
     padding-bottom: 56.25%;
