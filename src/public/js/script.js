@@ -1,6 +1,12 @@
 var searchManager;
 var locName;
 var map;
+var address = {
+    addressLine: undefined,
+    city: undefined,
+    state: undefined,
+    zipcode: undefined
+}
 
 function getMap() {
 
@@ -62,18 +68,18 @@ function reverseGeocode() {
     }
 }
 
-document.onreadystatechange = function () {
-    var state = document.readyState
-    if (state == 'interactive') {
-        document.getElementById('contents').style.visibility = "hidden";
-    } else if (state == 'complete') {
-        setTimeout(function () {
-            document.getElementById('interactive');
-            document.getElementById('load').style.visibility = "hidden";
-            document.getElementById('contents').style.visibility = "visible";
-        }, 2700);
-    }
-}
+// document.onreadystatechange = function () {
+//     var state = document.readyState
+//     if (state == 'interactive') {
+//         document.getElementById('contents').style.visibility = "hidden";
+//     } else if (state == 'complete') {
+//         setTimeout(function () {
+//             document.getElementById('interactive');
+//             document.getElementById('load').style.visibility = "hidden";
+//             document.getElementById('contents').style.visibility = "visible";
+//         }, 2700);
+//     }
+// }
 
 function searchListings() {
     const searchInput = document.getElementById('search-input');
@@ -108,6 +114,43 @@ function searchListings() {
         .catch(error => console.error(error));
 }
 
-function reloadReplies(pid) {
-    $('.modal-content').load('/feed/p/' + pid);
+function loadMapScenario(){
+    map = new Microsoft.Maps.Map(document.getElementById('hiddenMap'), {
+        center: new Microsoft.Maps.Location(47.606209, -122.332071),
+        zoom: 12
+    });
+
+    Microsoft.Maps.loadModule('Microsoft.Maps.AutoSuggest', function () {
+        var options = {
+            maxResults: 4,
+            map: map
+        };
+        var manager = new Microsoft.Maps.AutosuggestManager(options);
+        manager.attachAutosuggest('#searchBox', '#searchBoxContainer', selectedSuggestion);
+    });
+
+    function selectedSuggestion(result) {
+        Microsoft.Maps.loadModule('Microsoft.Maps.Search', function () {
+            var options = {
+                callback: () => {
+                    
+                },
+                includeNeighborhood: true,
+            }
+            searchManager = new Microsoft.Maps.Search.SearchManager(map);
+            geocodeQuery(query);
+        });
+
+        address.addressLine = result.address.addressLine;
+        address.city = result.address.locality;
+        address.state = result.address.countryRegionISO2;
+        address.zipcode = result.address.postalCode;
+
+        document.getElementById('showAddress').style.display = 'block';
+        document.getElementById('tempAddress').innerHTML = address.addressLine + "<br>" + address.city + ", " + address.state + " " + address.zipcode;
+    }
+}
+
+function changeAddress(propertyId){
+    fetch('/update_property/${searchQuery}')
 }

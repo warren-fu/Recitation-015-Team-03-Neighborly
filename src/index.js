@@ -607,16 +607,16 @@ app.get('/profile', (req, res) => {
       .then(data => {
         if(data){
           res.render('pages/profile', {
-            fixed_navbar: true,
-            propertyId: req.session.user.property_id,
-            username: req.session.user.username,
-            first_name: req.session.user.first_name,
-            last_name: req.session.user.last_name,
-            email: req.session.user.email,
-            phone_number: req.session.user.phone_number,
-            gender: req.session.user.gender,
-            birthdate: req.session.user.birthdate,
-            status: req.session.user.status_id,
+            fixed_navbar: false,
+            propertyId: user.property_id,
+            username: user.username,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            phone_number: user.phone_number,
+            gender: user.gender,
+            birthdate: user.birthdate,
+            status: user.status_id,
             address_line1: data.address_line1,
             address_line2: data.address_line2,
             city: data.city,
@@ -625,7 +625,7 @@ app.get('/profile', (req, res) => {
           });
         }else{
           res.render('pages/profile', {
-            fixed_navbar: true,
+            fixed_navbar: false,
             propertyId: req.session.user.property_id,
             username: req.session.user.username,
             first_name: req.session.user.first_name,
