@@ -1,21 +1,24 @@
 <%- include ('../partials/head') %>
 <%- include ('../partials/menu') %>
 <%- include ('../partials/message') %>
-<script src="/public/js/script.js"></script>
-<script>
-    (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
-      key: "AIzaSyCZjCp98-xCHFb19FN7JckplyO18ihetC0",
-      // Add other bootstrap parameters as needed, using camel case.
-      // Use the 'v' parameter to indicate the version to load (alpha, beta, weekly, etc.)
-    });
-  </script>
 <div class="d-flex align-items-center" style="height: 100vh;">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col">
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <input type="text" id="search-input" class="form-control" placeholder="Enter city name">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-primary"
+                            onclick="searchListings()">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-md-6 col-sm-4 d-none d-sm-block">
                 <div class="card shadow-lg">
-                    <div id="map" class="card-body map-container">
-                        
+                    <div class="card-body map-container">
+                        <div id="myMap"></div>
                     </div>
                 </div>
             </div>
@@ -23,26 +26,34 @@
                 <div class="card shadow-lg">
                     <div class="card-body listings-container">
                         <div class="d-flex flex-column">
-                            <% locals.listings.forEach(listing => { %>
-                                <div id="<%- listing.listing_id %>" class="card p-2 mb-3" style="width: 100%;">
-                                    <img class="card-img-top" src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Card image cap">
+                            <% locals.listings.forEach(listing=> { %>
+                                <div id="<%- listing.listing_id %>" class="card p-2 mb-3"
+                                    style="width: 100%;">
+                                    <img class="card-img-top"
+                                        src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+                                        alt="Card image cap">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-9">
-                                                <h5 class="card-title"><%- listing.address_line1 %></h5>
+                                                <h5 class="card-title">
+                                                    <%- listing.address_line1 %>
+                                                </h5>
                                             </div>
                                             <div class="col-3">
-                                                <h5 class="card-title text-right">$<%- listing.price %></h5>
+                                                <h5 class="card-title text-right">$<%- listing.price %>
+                                                </h5>
                                             </div>
                                         </div>
-                                      <p class="card-text"> <%- listing.description %></p>
-                                      <form action="/listing" method="POST">
-                                        <input type="hidden" id="property_id" name="property_id" value="<%-listing.property_id%>">
-                                        <button type="submit" class="btn btn-primary">Apply</button>
-                                      </form>
+                                        <p class="card-text">
+                                            <%- listing.description %>
+                                        </p>
+                                        <form action="/listing" method="POST">
+                                            <input type="hidden" id="property_id" name="property_id" value="<%-listing.property_id%>">
+                                            <button type="submit" class="btn btn-primary">Apply</button>
+                                        </form>
                                     </div>
-                                  </div>
-                            <% }); %>
+                                </div>
+                                <% }); %>
                         </div>
                     </div>
                 </div>
@@ -50,7 +61,9 @@
         </div>
     </div>
 </div>
+<script src="/public/js/script.js"></script>
+<script type='text/javascript' src='http://www.bing.com/api/maps/mapcontrol?callback=getMap&key=AljStGYPC2c0wdx-bBLB6DEKMphxfnbKeD98nf5NMJT7g_EFDUBTjzBxVN4-kqvX' async defer></script>
 <script>
-    window.onload = initMap();
+    window.onload = getMap();
 </script>
 <%- include ('../partials/footer') %>
