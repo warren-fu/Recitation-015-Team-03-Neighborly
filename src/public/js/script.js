@@ -114,7 +114,7 @@ function searchListings() {
         .catch(error => console.error(error));
 }
 
-function loadMapScenario(){
+function loadMapScenario() {
     map = new Microsoft.Maps.Map(document.getElementById('hiddenMap'), {
         center: new Microsoft.Maps.Location(47.606209, -122.332071),
         zoom: 12
@@ -133,7 +133,7 @@ function loadMapScenario(){
         Microsoft.Maps.loadModule('Microsoft.Maps.Search', function () {
             var options = {
                 callback: () => {
-                    
+
                 },
                 includeNeighborhood: true,
             }
@@ -151,6 +151,6 @@ function loadMapScenario(){
     }
 }
 
-function changeAddress(propertyId){
+function changeAddress(propertyId) {
     fetch('/update_property/${searchQuery}')
 }
