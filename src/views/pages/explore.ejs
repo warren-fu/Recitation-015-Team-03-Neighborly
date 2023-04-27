@@ -48,8 +48,10 @@
                                         <p class="card-text">
                                             <%- listing.description %>
                                         </p>
-                                        <a href="/listing/<%- listing.listing_id %>"
-                                            class="btn btn-primary">Apply</a>
+                                        <form action="/listing" method="POST">
+                                            <input type="hidden" id="property_id" name="property_id" value="<%-listing.property_id%>">
+                                            <button type="submit" class="btn btn-primary">Apply</button>
+                                        </form>
                                     </div>
                                 </div>
                                 <% }); %>
