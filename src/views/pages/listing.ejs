@@ -1,40 +1,93 @@
 <%- include ('../partials/head') %>
-<%- include ('../partials/menu') %>
-<%- include ('../partials/message') %>
-<main>
-  <div class="d-flex align-items-center" style="height: 100vh">
-    <div class="container">
-      <div class="row justify-content-center" top="50px">
-        <% var addr = data.address.line + ", " + data.address.city + ", " +
-        data.address.state_code; data.photos.forEach(photo => { %>
-        <!-- <div style="top:50px; position: absolute; padding-bottom: 56.25%; width: 75%"> -->
-        <img style="width: 25%; height: 25%" src="<%-photo.href%>" />
-        <!-- </div> -->
+  <%- include ('../partials/menu') %>
+    <%- include ('../partials/message') %>
+      <main>
+        <div class="container mt-5">
+          <div class="row justify-content-center" style="top: 0;">
+            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel"
+              style="width: 300px; height: 300px;">
+              <div class="carousel-indicators">
+                <% data.photos.forEach((photo, index)=> { %>
+                  <button type="button" data-bs-target="#carouselExampleControls" data-bs-slide-to="<%= index %>" <%
+                    if(index===0) { %>class="active"<% } %> aria-current="true" aria-label="Slide <%= index + 1 %>
+                        "></button>
+                  <% }); %>
+              </div>
+              <div class="carousel-inner">
+                <% data.photos.forEach((photo, index)=> { %>
+                  <div class="carousel-item <% if(index === 0) { %>active<% } %>">
+                    <img src="<%= photo.href %>" class="d-block w-100 h-100" alt="Slide <%= index + 1 %>">
+                  </div>
+                  <% }); %>
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
-        <% }); %>
-      </div>
-      <div class="row justify-content-center">
-        <div class="col">
-          <h1><%-addr%></h1>
+        <div class="d-flex align-items-center" style="height: 100vh">
+          <div class="container">
+            <div class="row justify-content-center" style="top: 0;">
+              <div class="row justify-content-center mt-5">
+                <div class="col-8">
+                  <div class="row">
+                    <div class="col-6">
+                      <h1>
+                        <%= data.address.line %>, <%= data.address.city %>, <%= data.address.state_code %>
+                      </h1>
+                    </div>
+                    <div class="col-6 text-end">
+                      <h1>Price: <%-data.price%></h1>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row justify-content-center mt-5">
+                <div class="col-8">
+                  <h1 class="mb-4">Description</h1>
+                  <div class="card">
+                    <div class="card-body">
+                      <p><%-data.description%></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row justify-content-center mt-5">
+                <div class="col-8 text-start">
+                  <h1>Features</h1>
+                  <div class="card">
+                    <div class="card-body">
+                      <ul>
+                        <li><a><%-data.prop_type%></a></li>
+                        <li><a>Year Built: <%-data.year_built%></a></li>
+                        <li><a>Size: <%-data.sqft%> sqft</a></li>
+                        <% data.features.forEach(feature=> { %>
+                          <li><a><%-feature.text%></a></li>
+                          <% }); %>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col">
-          <h1>Price: <%-data.price%></h1>
-        </div>
-      </div>
-      <div class="row justify-content-center">
-        <h1>Description:</h1>
-        <p><%-data.description%></p>
-      </div>
-      <div class="row justify-content-center">
-        <h1>Features:</h1>
-        <a><%-data.prop_type%></a>
-        <a>Year Built: <%-data.year_built%></a>
-        <a>Size: <%-data.sqft%> sqft</a>
-        <%data.features.forEach(feature => { %>
-        <a><%-feature.text%></a>
-        <% }); %>
-      </div>
-    </div>
-  </div>
-</main>
-<%- include ('../partials/footer') %>
+      </main>
+      <%- include ('../partials/footer') %>
+
+        <style>
+          .carousel-item img {
+            object-fit: contain;
+          }
+        </style>
