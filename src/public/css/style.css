@@ -106,3 +106,38 @@ input:checked+.slider:before {
     border-radius: 10px;
     overflow: hidden;
 }
+
+.blurred-bg {
+    background-image: url('https://www.dreamhomesbyjen.com/wp-content/uploads/2019/11/calm-suburban-neighborhood.jpg');
+    background-size: cover;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  .blurred-bg::after {
+    content: "";
+    background: inherit;
+    filter: blur(10px);
+    -webkit-filter: blur(10px);
+    position: fixed;
+    top: -10px;
+    left: -10px;
+    width: calc(100% + 20px);
+    height: calc(100% + 20px);
+    z-index: -1;
+  }
+
+  .card {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .behind-form {
+    position: relative;
+    z-index: 1;
+  }

@@ -1,32 +1,35 @@
 <%- include ('../partials/head') %>
-<%- include ('../partials/message') %>
-  <div class="d-flex align-items-center" style="height: 100vh;">
-    <div class="container" >
-      <div class="row justify-content-center">
-        <div class="col-lg-4 col-md-6 col-sm-8">
-          <div class="card shadow-lg">
-            <div class="card-body">
-              <h5 class="card-title text-center mb-4">Login</h5>
-              <form action="/login" method="POST">
-                <div class="form-floating mb-3">
-                  <input type="username" class="form-control" id="username" placeholder="Username" name="username">
-                  <label for="username">Username</label>
+  <%- include ('../partials/message') %>
+    <div class="blurred-bg">
+      <div class="d-flex align-items-center" style="height: 100vh;">
+        <div class="container behind-form">
+          <h1 class="text-center text-white display-2 mb-5" style="margin-top: -0vh;">Neighborly Connect</h1>
+          <div class="row justify-content-center align-items-center" style="height: 60vh;">
+            <div class="col-lg-4 col-md-6 col-sm-8" style="height: 50vh;">
+              <div class="card shadow-lg">
+                <div class="card-body">
+                  <h5 class="card-title text-center mb-4">Login</h5>
+                  <form action="/login" method="POST">
+                    <div class="form-floating mb-3">
+                      <input type="username" class="form-control" id="username" placeholder="Username" name="username">
+                      <label for="username">Username</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                      <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+                      <label for="password">Password</label>
+                    </div>
+                    <div class="form-check mb-3">
+                      <a href="/register">Don't have an account? Register</a>
+                    </div>
+                    <div class="d-grid gap-2">
+                      <button type="submit" class="btn btn-primary">Sign in</button>
+                    </div>
+                  </form>
                 </div>
-                <div class="form-floating mb-3">
-                  <input type="password" class="form-control" id="password" placeholder="Password" name="password">
-                  <label for="password">Password</label>
-                </div>
-                <div class="form-check mb-3">
-                    <a href="/register">Don't have an account? Register</a>
-                </div>
-                <div class="d-grid gap-2">
-                  <button type="submit" class="btn btn-primary">Sign in</button>
-                </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-<%- include ('../partials/footer') %>
+    <%- include ('../partials/footer') %>
