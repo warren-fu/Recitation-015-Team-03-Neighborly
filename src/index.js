@@ -383,7 +383,10 @@ const test_data = {
 
 app.post("/listing", async (req, res) => {
   var data = test_data.listing;
-  res.render("pages/listing", {data});
+  res.render("pages/listing", {
+    data: data,
+    username: req.session.user.username, // pass the username variable to the template
+  });
 
   // const query = `SELECT list.listing_id, prop.address_line1, prop.city, prop.state, prop.zipcode FROM listing AS list LEFT JOIN properties AS prop ON list.property_id = "${req.body.property_id}";`;
   // console.log(res.listing_id )
