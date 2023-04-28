@@ -907,7 +907,41 @@ app.post('/addInterests', (req, res) => {
 
   db.any(query, [username, education, job, hobby])
     .then(data => {
-      res.send(data);
+      // if user put an address in 
+      if (user.address1 == null && user.address2 == null && user.city == null && user.state == null && user.city == null) {
+        res.render('pages/profile', {
+          fixed_navbar: false,
+          propertyId: user.property_id,
+          username: user.username,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          phone_number: user.phone_number,
+          gender: user.gender,
+          birthdate: user.birthdate,
+          status: user.status_id,
+        });
+      }
+      // if user doesn't have address
+      else {
+        res.render('pages/profile', {
+          fixed_navbar: false,
+          propertyId: user.property_id,
+          username: user.username,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          phone_number: user.phone_number,
+          gender: user.gender,
+          birthdate: user.birthdate,
+          status: user.status_id,
+          address_line1: user.address1,
+          address_line2: user.address2,
+          city: user.city,
+          state: user.state,
+          zipcode: user.zip
+        });
+      }
     })
     .catch(err => {
       res.send(err);
