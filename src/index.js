@@ -518,30 +518,41 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
   const username = req.body.username;
+  const password = req.body.password;
   const query = "select * from users where users.username = $1";
 
-  // get the student_id based on the emailid
   db.one(query, [username])
-    .then((data) => {
-      user.username = data.username;
-      user.property_id = data.property_id;
-      user.status_id = data.status_id;
-      user.password = data.password;
-      user.first_name = data.first_name;
-      user.last_name = data.last_name;
-      user.email = data.email;
-      user.phone_number = data.phone_number;
-      user.gender = data.gender;
-      user.birthdate = data.birthdate;
+    .then(async (data) => {
+      const match = await bcrypt.compare(password, data.password);
+      if (match) {
+        user.username = data.username;
+        user.property_id = data.property_id;
+        user.status_id = data.status_id;
+        user.password = data.password;
+        user.first_name = data.first_name;
+        user.last_name = data.last_name;
+        user.email = data.email;
+        user.phone_number = data.phone_number;
+        user.gender = data.gender;
+        user.birthdate = data.birthdate;
 
-      req.session.user = user;
-      req.session.save();
+        req.session.user = user;
+        req.session.save();
 
-      res.redirect("/explore");
+        res.redirect("/explore");
+      } else {
+        res.render("pages/login", {
+          error: "danger",
+          message: "Incorrect username or password",
+        });
+      }
     })
     .catch((err) => {
       console.log(err);
-      res.redirect("/login");
+      res.render("pages/login", {
+        error: "danger",
+        message: "Incorrect username or password",
+      });
     });
 });
 
