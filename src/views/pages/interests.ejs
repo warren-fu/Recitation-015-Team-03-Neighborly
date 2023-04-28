@@ -1,0 +1,14 @@
+<%- include('../partials/head') %>
+<%- include('../partials/menu') %>
+
+<div class="container">
+    <!-- TODO: add hobbies button and allow users to choose a hobby -->
+    <% if (!interests_id) {%>
+        <p>no interests</p>
+   <%}
+   else { %>
+    <p><%- interests_id %></p>
+ <%} %>
+</div>
+
+<%- include('../partials/footer') %>

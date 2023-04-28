@@ -901,47 +901,56 @@ app.post('/downvote', (req, res) => {
   })
 });
 
+app.get('/interests', (req, res) => {
+  const username = req.session.user.username;
+  const query = 'SELECT interests.interests_id, interests.education, interests.job, interests.hobby FROM interests JOIN users ON interests.username = users.username WHERE users.username = $1;';
+
+  db.any(query, [username])
+    .then(data => {
+      res.render('pages/interests', {
+        fixed_navbar: false,
+        propertyId: user.property_id,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        phone_number: user.phone_number,
+        gender: user.gender,
+        birthdate: user.birthdate,
+        status: user.status_id,
+        interests_id: data.interests_id,
+        education: data.education,
+        job: data.job,
+        hobby: data.hobby
+      });
+    })
+    .catch(data => {
+      res.render('pages/interests', {
+        fixed_navbar: false,
+        propertyId: user.property_id,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        phone_number: user.phone_number,
+        gender: user.gender,
+        birthdate: user.birthdate,
+        status: user.status_id,
+        interests_id: '',
+        education: '',
+        job: '',
+        hobby: ''
+      });
+    });
+});
+
 app.post('/addInterests', (req, res) => {
   const username = req.session.user.username, education = req.body.education, job = req.body.job, hobby = req.body.hobby;
-  const query = 'INSERT INTO interests (username, education, job, hobby) VALUES ($1, $2, $3, $4) RETURNING interests_id;';
+  const query = 'INSERT INTO interests (username, education, job, hobby) VALUES ($1, $2, $3, $4) RETURNING *;';
 
   db.any(query, [username, education, job, hobby])
     .then(data => {
-      // if user put an address in 
-      if (user.address1 == null && user.address2 == null && user.city == null && user.state == null && user.city == null) {
-        res.render('pages/profile', {
-          fixed_navbar: false,
-          propertyId: user.property_id,
-          username: user.username,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          email: user.email,
-          phone_number: user.phone_number,
-          gender: user.gender,
-          birthdate: user.birthdate,
-          status: user.status_id,
-        });
-      }
-      // if user doesn't have address
-      else {
-        res.render('pages/profile', {
-          fixed_navbar: false,
-          propertyId: user.property_id,
-          username: user.username,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          email: user.email,
-          phone_number: user.phone_number,
-          gender: user.gender,
-          birthdate: user.birthdate,
-          status: user.status_id,
-          address_line1: user.address1,
-          address_line2: user.address2,
-          city: user.city,
-          state: user.state,
-          zipcode: user.zip
-        });
-      }
+      res.render('pages/interests');
     })
     .catch(err => {
       res.send(err);
