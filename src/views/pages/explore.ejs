@@ -26,7 +26,9 @@
                 <div class="card shadow-lg">
                     <div class="card-body listings-container">
                         <div class="d-flex flex-column">
-                            <% locals.listings.forEach(listing=> { %>
+                            <% locals.listings.forEach(listing=> { 
+                                console.log(listing.property_id);
+                                %>
                                 <div id="<%- listing.listing_id %>" class="card p-2 mb-3"
                                     style="width: 100%;">
                                     <img class="card-img-top"

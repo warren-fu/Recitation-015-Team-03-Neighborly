@@ -380,10 +380,47 @@ const test_data = {
     advertiser_type: "agent"
   }
 };
+var addy = "";
+app.get("/listing", async (req, res) => {
+  console.log(addy);
+  
+
+  const options = {
+    method: 'GET',
+    url: 'https://realty-in-us.p.rapidapi.com/locations/v2/auto-complete',
+    params: {
+      input: 'boulder, 1170 Albion rd',
+      limit: '10'
+    },
+    headers: {
+      'content-type': 'application/octet-stream',
+      'X-RapidAPI-Key': '51110bf831mshd401637aba1666dp184555jsnf920fb6f82f1',
+      'X-RapidAPI-Host': 'realty-in-us.p.rapidapi.com'
+    }
+  };
+  try {
+    const response = await axios.request(options);
+    console.log(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 app.post("/listing", async (req, res) => {
-  var data = test_data.listing;
-  res.render("pages/listing", {data});
+  const property_id = req.body.property_id;
+  console.log(property_id);
+  const query =
+    `SELECT address_line1 FROM properties WHERE property_id = ${property_id};`;
+  db.any(query)
+    .then((data) => {
+      console.log(data);
+      addy = data[0].address_line1;
+      res.redirect("/listing");
+    })
+    .catch(function () {
+      return res.redirect("/explore");
+    });
+  
 
   // const query = `SELECT list.listing_id, prop.address_line1, prop.city, prop.state, prop.zipcode FROM listing AS list LEFT JOIN properties AS prop ON list.property_id = "${req.body.property_id}";`;
   // console.log(res.listing_id )
@@ -570,7 +607,7 @@ app.get("/get_userAddress", (req, res) => {
 
 app.get("/explore", (req, res) => {
   const query =
-    "SELECT list.listing_id, prop.address_line1, list.price, list.description FROM listing AS list LEFT JOIN properties AS prop ON list.property_id = prop.property_id;";
+    "SELECT list.listing_id, list.property_id, prop.address_line1, list.price, list.description FROM listing AS list LEFT JOIN properties AS prop ON list.property_id = prop.property_id;";
 
   db.any(query)
     .then((data) => {
