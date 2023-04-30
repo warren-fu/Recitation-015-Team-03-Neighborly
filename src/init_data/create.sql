@@ -113,7 +113,7 @@ DROP TABLE IF EXISTS interests CASCADE;
 CREATE TABLE IF NOT EXISTS interests (
   interests_id SERIAL PRIMARY KEY,
   username VARCHAR(50) NOT NULL,
-  education NUMERIC,
-  job NUMERIC,
-  hobby NUMERIC
+  education VARCHAR(25),
+  job VARCHAR(25),
+  hobby VARCHAR(25)
 );

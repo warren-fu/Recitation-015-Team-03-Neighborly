@@ -3,12 +3,27 @@
 
 <div class="container">
     <!-- TODO: add hobbies button and allow users to choose a hobby -->
-    <% if (!interests_id) {%>
-        <p>no interests</p>
-   <%}
-   else { %>
-    <p><%- interests_id %></p>
- <%} %>
+    <div class="row justify-content-center">
+        <div class="col"></div>
+        <div class="col">
+            <% if (!interests_id) {%>
+                <p>no interests</p>
+                <form action="/addInterests" method="POST">
+                    <select name="hobby" aria-label="Select Hobby" class="form-select">
+                        <option selected>Select Hobby...</option>
+                        <option value="sports">Sports</option>
+                        <option value="drawing">Drawing</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            <%}
+            else { %>
+                <p><%- hobby %></p>
+                <p><%- interests_id %></p>
+            <% } %>
+        </div>
+        <div class="col"></div>
+    </div>
 </div>
 
 <%- include('../partials/footer') %>
