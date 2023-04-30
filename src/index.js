@@ -706,14 +706,27 @@ app.post('/profile', (req,res) => {
 });
 
 app.get("/feed", (req, res) => {
-  const query =
+  const page = req.query.page;
+  const query_user =
+    "SELECT posts.username, posts.datetime, posts.post_id, posts.subject, posts.description, posts.votes FROM posts WHERE posts.username = $1 ORDER BY posts.datetime DESC;";
+  const query_neighborhood =
     "SELECT posts.username, posts.datetime, posts.post_id, posts.subject, posts.description, posts.votes FROM posts WHERE posts.neighborhood_id = $1 ORDER BY posts.datetime DESC;";
   const neighborhood_id_query =
     "SELECT prop.neighborhood_id FROM properties AS prop JOIN users ON prop.property_id = users.property_id WHERE users.username = $1;";
 
+  values = [];
+
   db.any(neighborhood_id_query, [user.username])
     .then((data) => {
-      db.any(query, [parseInt(data.neighborhood_id)])
+      if (page == 'n'){
+        query = query_neighborhood;
+        values = [parseInt(data.neighborhood_id)];
+      }
+      else {
+        query = query_user;
+        values = [user.username];
+      }
+      db.any(query, values)
         .then((results) => {
           res.render("pages/feed", {
             fixed_navbar: false,
@@ -771,10 +784,10 @@ app.post("/feed", (req, res) => {
         0,
       ])
         .then(() => {
-          res.redirect("/feed");
+          res.redirect("/feed?page=n");
         })
         .catch(() => {
-          res.render("pages/feed", {
+          res.render("pages//feed?page=n", {
             fixed_navbar: false,
             username: req.session.user.username,
             error: "danger",
@@ -791,7 +804,7 @@ app.post("/feed", (req, res) => {
         });
     })
     .catch((err) => {
-      res.render("pages/feed", {
+      res.render("pages//feed?page=n", {
         fixed_navbar: false,
         username: req.session.user.username,
         error: "danger",
