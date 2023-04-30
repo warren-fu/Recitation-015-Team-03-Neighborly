@@ -1,0 +1,71 @@
+<%- include ('../partials/head') %>
+<%- include ('../partials/menu') %>
+<%- include ('../partials/message') %>
+<div class="d-flex align-items-center mb-5 mt-3">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-12 col-sm-12">
+        <div class="d-flex justify-content-between">
+          <h3>
+            <%- locals.application.address_line1 %>
+          </h3>
+          <h3>
+            $<%- locals.application.price %>
+          </h3>
+        </div>
+        <div id="carouselExample" class="carousel slide mb-3" style="width: 100%;">
+          <div class="carousel-inner">
+            <% locals.application.images.forEach(image=> {%>
+              <div class="carousel-item active">
+                <img src="<%- image %>" class="d-block w-100" alt="...">
+              </div>
+              <% }); %>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+        <div class="container mb-3">
+          <h3>Description</h3>
+          <p>
+            <%- locals.application.description %>
+          </p>
+        </div>
+        <div class="container mb-3">
+            <h3>Common Interests</h3>
+            <ul class="list-group list-group-flush">
+                <% locals.application.interests.filter(element => user.interests.includes(element)).forEach(interest => { %> 
+                    <li class="list-group-item"><%- interest %></li>
+                <% }); %>
+            </ul>
+          </div>
+        <div class="container mb-3">
+            <h5><%- locals.application.question_1 %></h5>
+            <p>
+              <%- locals.application.prompt_1 %>
+            </p>
+        </div>
+        <div class="container mb-3">
+            <h5><%- locals.application.question_2 %></h5>
+            <p>
+              <%- locals.application.prompt_2 %>
+            </p>
+        </div>
+        <div class="container mb-3">
+            <h5><%- locals.application.question_3 %></h5>
+            <p>
+              <%- locals.application.prompt_3 %>
+            </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include ('../partials/footer') %>

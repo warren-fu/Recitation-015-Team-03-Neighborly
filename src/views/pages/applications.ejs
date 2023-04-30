@@ -1,0 +1,57 @@
+<%- include ('../partials/head') %>
+<%- include ('../partials/menu') %>
+<%- include ('../partials/message') %>
+<div class="d-flex align-items-center mb-5 mt-3">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9 col-md-12 col-sm-12">
+                <h3>My Applications</h5>
+                <table class="table table-striped">
+                    <tr>
+                        <th>Address</th>
+                        <th>Price</th>
+                        <th>Date Applied</th>
+                        <th></th>
+                    </tr>
+                    <% if(locals.applications){ %>
+                        <% locals.applications.forEach(application => { %>
+                            <tr>
+                                <td><%- application.address_line1 %></th>
+                                <td><%- application.price %></th>
+                                <td><%- 1 + new Date(application.datetime).getMonth() %>/<%- new Date(application.datetime).getDate() %>/<%- 1900 + new Date(application.datetime).getYear() %></th>
+                                <td><a class="btn btn-primary" href="/applications/o/<%- application.application_id %>">View</a></th>
+                            </tr>
+                        <% }); %>
+                    <%}%>
+                </table>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-9 col-md-12 col-sm-12">
+                <div class="d-flex justify-content-between">
+                    <h3>My Listing</h5>
+                    <a class="btn btn-primary" href="\add_listing">Add Listing</a>
+                </div>
+                <table class="table table-striped">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Date Applied</th>
+                        <th></th>
+                    </tr>
+                    <% if(locals.listing_applications){ %>
+                        <% locals.listing_applications.forEach(application => { %>
+                            <tr>
+                                <td><%- application.first_name %> <%- application.last_name %></th>
+                                <td><%- application.email %></th>
+                                <td><%- 1 + new Date(application.datetime).getMonth() %>/<%- new Date(application.datetime).getDate() %>/<%- 1900 + new Date(application.datetime).getYear() %></th>
+                                <td><a class="btn btn-primary" href="/applications/u/<%- application.application_id %>">View</a></th>
+                            </tr>
+                        <% }); %>
+                    <%}%>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include ('../partials/footer') %>

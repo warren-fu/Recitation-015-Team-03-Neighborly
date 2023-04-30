@@ -1,0 +1,68 @@
+<%- include ('../partials/head') %>
+<%- include ('../partials/menu') %>
+<%- include ('../partials/message') %>
+<div class="d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9 col-md-12 col-sm-12">
+                <h3> <%- locals.address_line1 %> </h3>
+                <form class="form mb-5" action="/add_listing" method="POST" enctype="multipart/form-data">
+                    <div class="form-floating mb-3">
+                        <input class="form-control" type="file" name="image1" required />
+                        <input class="form-control" type="file" name="image2" />
+                        <input class="form-control" type="file" name="image3" />
+                        <input class="form-control" type="file" name="image4" />
+                        <input class="form-control" type="file" name="image5" />    
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="price" placeholder="$"
+                            name="price" required>
+                        <label for="price">Price</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control mb-3" id="exampleFormControlTextarea2"
+                            rows="5" style="height: 10rem" name="description" required></textarea>
+                        <label for="exampleFormControlTextarea1">Description</label>
+                    </div>
+                    <div class="form-group form-floating mb-3">
+                        <label for="exampleFormControlSelect1">Question 1</label>
+                        <select class="form-control" id="exampleFormControlSelect1" name="question1" required>
+                            <option value="" selected disabled hidden></option>
+                            <option>Do you work from home?</option>
+                            <option>What do you want in a roommate?</option>
+                            <option>What are your cleaning habits? </option>
+                            <option>What do you like to do on the weekends?</option>
+                            <option>Do you smoke?</option>
+                        </select>
+                    </div>
+                    <div class="form-group form-floating mb-3">
+                        <label for="exampleFormControlSelect1">Question 2</label>
+                        <select class="form-control" id="exampleFormControlSelect2" name="question2">
+                            <option value="" selected disabled hidden></option>
+                            <option>What is your usual bedtime?</option>
+                            <option>How often do you have friends over?</option>
+                            <option>Do you have any pets?</option>
+                            <option>Are you in a romantic relationship?</option>
+                            <option>What are some challenges you've faced in past living situations?</option>
+                        </select>
+                    </div>
+                    <div class="form-group form-floating mb-3">
+                        <label for="exampleFormControlSelect1">Question 3</label>
+                        <select class="form-control" id="exampleFormControlSelect3" name="question3">
+                            <option value="" selected disabled hidden></option>
+                            <option>What's your favorite movie?</option>
+                            <option>What was your favorite subject in school?</option>
+                            <option>Are you an introvert or an extrovert?</option>
+                            <option>Where do you see yourself in 10 years?</option>
+                            <option>What is one thing you will never do again?</option>
+                        </select>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Add</button>
+                      </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include ('../partials/footer') %>
