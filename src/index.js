@@ -402,10 +402,10 @@ app.post("/feed", (req, res) => {
         0,
       ])
         .then(() => {
-          res.redirect("/feed");
+          res.redirect("/feed?page=n");
         })
         .catch(() => {
-          res.render("pages/feed", {
+          res.render("pages//feed?page=n", {
             fixed_navbar: false,
             username: user.username,
             error: "danger",
@@ -423,7 +423,7 @@ app.post("/feed", (req, res) => {
         });
     })
     .catch((err) => {
-      res.render("pages/feed", {
+      res.render("pages//feed?page=n", {
         fixed_navbar: false,
         username: user.username,
         error: "danger",
