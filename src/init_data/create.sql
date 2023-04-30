@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS listing (
 DROP TABLE IF EXISTS properties CASCADE;
 
 CREATE TABLE IF NOT EXISTS properties (
-  property_id NUMERIC primary key,
+  property_id SERIAL primary key,
   neighborhood_id NUMERIC NOT NULL,
   address_line1 VARCHAR(150) NOT NULL,
   address_line2 VARCHAR(150),

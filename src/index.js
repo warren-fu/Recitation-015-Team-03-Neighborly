@@ -518,8 +518,11 @@ app.post("/login", (req, res) => {
   const query = "select * from users where users.username = $1";
 
   // get the student_id based on the emailid
+  
   db.one(query, [username])
     .then((data) => {
+      console.log(user.password);
+  console.log(req.body.password);
       user.username = data.username;
       user.property_id = data.property_id;
       user.status_id = data.status_id;
@@ -608,7 +611,7 @@ app.get('/profile', (req, res) => {
         if(data){
           res.render('pages/profile', {
             fixed_navbar: false,
-            propertyId: user.property_id,
+            propertyId: req.session.user.property_id,
             username: user.username,
             first_name: user.first_name,
             last_name: user.last_name,
@@ -654,55 +657,115 @@ app.post('/profile', (req,res) => {
   // const userToListQuery = 'INSERT INTO ';
   // const listingQuery = 'INSERT INTO listing (listing_id, username, property_id, price, description) VALUES ($1, $2, $3, $4, $5);';
 
+const address1 = req.body.address_1;
+const address2 = req.body.address_2;
+const city = req.body.city;
+const state = req.body.state;
+const zip = req.body.zip;
+
+const propertyQuery = 'INSERT INTO properties (neighborhood_id, address_line1, address_line2, city, state, zipcode) VALUES ($1, $2, $3, $4, $5, $6) returning property_id;';
+db.any(propertyQuery, [1, address1, address2, city, state, zip])
+.then(data =>{
+  console.log('Data: ', data);
+  console.log('Data: ', data);
+  // Update the user's property_id in the users table
+  const updateUserQuery = 'UPDATE users SET property_id = $1 WHERE username = $2';
+  return db.none(updateUserQuery, [data[0].property_id, req.session.user.username])
+    .then(() => {
+      // Update the property_id in the session
+      req.session.user.property_id = data[0].property_id;
+      console.log(req.session.user.property_id);
+      return res.render('pages/profile', {
+        fixed_navbar: false,
+        propertyId: req.session.user.property_id,
+        username: req.session.user.username,
+        first_name: req.session.user.first_name,
+        last_name: req.session.user.last_name,
+        email: req.session.user.email,
+        phone_number: req.session.user.phone_number,
+        gender: req.session.user.gender,
+        birthdate: req.session.user.birthdate,
+        status: req.session.user.status_id,
+        address_line1: address1,
+        address_line2: address2,
+        city: city,
+        state: state,
+        zipcode: zip
+      });
+    });
+})
+.catch(err =>{
+  console.log(err);
+  return res.render('pages/profile', {
+    fixed_navbar: false,
+    propertyId: req.session.user.property_id,
+    username: req.session.user.username,
+    first_name: req.session.user.first_name,
+    last_name: req.session.user.last_name,
+    email: req.session.user.email,
+    phone_number: req.session.user.phone_number,
+    gender: req.session.user.gender,
+    birthdate: req.session.user.birthdate,
+    status: req.session.user.status_id,
+    address_line1: '',
+    address_line2: '',
+    city: '',
+    state: '',
+    zipcode: '',
+    error: 'danger', 
+    message: 'Invalid address has been inputed' });
+})
+});
+
+app.post('/updateProfile', (req,res) =>{
   const address1 = req.body.address_1;
   const address2 = req.body.address_2;
   const city = req.body.city;
   const state = req.body.state;
   const zip = req.body.zip;
-
-  const propertyQuery = 'INSERT INTO properties (property_id, neighborhood_id, address_line1, address_line2, city, state, zipcode) VALUES ($1, $2, $3, $4, $5, $6, $7);';
-  db.any(propertyQuery, [1234, 1, address1, address2, city, state, zip])
-  .then(data =>{
-    req.session.user.property_id = 1234;
-    console.log(req.session.user.property_id);
+  const query = 'UPDATE properties SET address_line1 = $1, address_line2 = $2, city = $3, state = $4, zipcode = $5 WHERE property_id = $6 returning property_id;';
+  db.one(query, [address1, address2, city, state, zip, req.session.user.property_id])
+  .then(() =>{
+    // console.log("It should pass");
     return res.render('pages/profile', {
-            fixed_navbar: true,
-            propertyId: req.session.user.property_id,
-            username: req.session.user.username,
-            first_name: req.session.user.first_name,
-            last_name: req.session.user.last_name,
-            email: req.session.user.email,
-            phone_number: req.session.user.phone_number,
-            gender: req.session.user.gender,
-            birthdate: req.session.user.birthdate,
-            status: req.session.user.status_id,
-            address_line1: address1,
-            address_line2: address2,
-            city: city,
-            state: state,
-            zipcode: zip
-          });
+      fixed_navbar: false,
+      propertyId: req.session.user.property_id,
+      username: req.session.user.username,
+      first_name: req.session.user.first_name,
+      last_name: req.session.user.last_name,
+      email: req.session.user.email,
+      phone_number: req.session.user.phone_number,
+      gender: req.session.user.gender,
+      birthdate: req.session.user.birthdate,
+      status: req.session.user.status_id,
+      address_line1: address1,
+      address_line2: address2,
+      city: city,
+      state: state,
+      zipcode: zip
+    });
   })
   .catch(err =>{
+    // console.log(err);
     return res.render('pages/profile', {
-            fixed_navbar: true,
-            propertyId: req.session.user.property_id,
-            username: req.session.user.username,
-            first_name: req.session.user.first_name,
-            last_name: req.session.user.last_name,
-            email: req.session.user.email,
-            phone_number: req.session.user.phone_number,
-            gender: req.session.user.gender,
-            birthdate: req.session.user.birthdate,
-            status: req.session.user.status_id,
-            address_line1: '',
-            address_line2: '',
-            city: '',
-            state: '',
-            zipcode: ''
-          }, 
-          { error: 'danger', message: 'Invalid address has been inputed' });
-  })
+    fixed_navbar: false,
+    propertyId: req.session.user.property_id,
+    username: req.session.user.username,
+    first_name: req.session.user.first_name,
+    last_name: req.session.user.last_name,
+    email: req.session.user.email,
+    phone_number: req.session.user.phone_number,
+    gender: req.session.user.gender,
+    birthdate: req.session.user.birthdate,
+    status: req.session.user.status_id,
+    address_line1: address1,
+    address_line2: address2,
+    city: city,
+    state: state,
+    zipcode: zip,
+    error: 'danger', 
+    message: 'Invalid address to update to' });
+})
 });
 
 app.get("/feed", (req, res) => {

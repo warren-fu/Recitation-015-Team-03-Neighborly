@@ -12,6 +12,8 @@ INSERT INTO properties (property_id, neighborhood_id, address_line1, address_lin
 INSERT INTO properties (property_id, neighborhood_id, address_line1, address_line2, city, state, zipcode) VALUES (4, 1, '3300 BLUFF ST', NULL, 'Boulder', 'CO', 80301);
 INSERT INTO properties (property_id, neighborhood_id, address_line1, address_line2, city, state, zipcode) VALUES (5, 1, '1300 5TH ST', NULL, 'Boulder', 'CO', 80302);
 
+SELECT setval('properties_property_id_seq', 1000, true);
+
 INSERT INTO listing (listing_id, username, property_id, price, description) VALUES (1,'will', 1, 800, 'Great place to live!');
 INSERT INTO listing (listing_id, username, property_id, price, description) VALUES (2,'warren', 2, 900, 'Awesome place to live!');
 INSERT INTO listing (listing_id, username, property_id, price, description) VALUES (3,'juno', 3, 1200, 'Sweet place to live!');

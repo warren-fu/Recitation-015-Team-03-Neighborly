@@ -1,6 +1,164 @@
 <%- include('../partials/head') %>
 <%- include('../partials/menu') %>
-<div class="d-flex align-items-center">
+<%- include('../partials/message')%>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<div class="container my-5" style="padding-top: 50px;">
+  <div class="row">
+    <div class="col-lg-8" >
+      <h1 class="mb-4">My Profile: <%= username %></h1>
+
+      <table class="table table-bordered table-striped">
+        <tr>
+          <td style="width: 150px;">First Name:</td>
+          <td><%= first_name %></td>
+        </tr>
+
+        <tr>
+          <td>Last Name:</td>
+          <td><%= last_name %></td>
+        </tr>
+
+        <tr>
+          <td>Email:</td>
+          <td><%= email %></td>
+        </tr>
+
+        <tr>
+          <td>Phone Number:</td>
+          <td><%= phone_number %></td>
+        </tr>
+
+        <tr>
+          <td>Gender:</td>
+          <td><%= gender %></td>
+        </tr>
+
+        <tr>
+          <td>Birthday:</td>
+          <td><%= new Date(birthdate).toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></td>
+        </tr>
+
+      </table>
+    </div>
+
+
+    <% if(!propertyId){ %>
+      <div class="col-lg-4">
+      <h1 class="mb-4">Add Your Property</h1>
+      <form action="/profile" method="POST">
+        <div class="form-group">
+          <label for="address_1">Address 1:</label>
+          <input type="text" class="form-control" name="address_1" id="address_1" required>
+        </div>
+        <div class="form-group">
+          <label for="address_2">Address 2:</label>
+          <input type="text" class="form-control" name="address_2" id="address_2">
+        </div>
+        <div class="form-group">
+          <label for="city">City:</label>
+          <input type="text" class="form-control" name="city" id="city" required>
+        </div>
+        <div class="form-group">
+          <label for="state">State:</label>
+          <input type="text" class="form-control" name="state" id="state" required>
+        </div>
+        <div class="form-group">
+          <label for="zip">ZIP Code:</label>
+          <input type="text" class="form-control" name="zip" id="zip" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top: 10px;">Save</button>
+      </form>
+    </div>
+    <% }else{ %>
+      <div class="col-lg-4">
+        
+
+        <h1 class="mb-4">Your Address</h1>
+        <table class="table table-bordered table-striped">
+          
+          <% if(address_line2){ %>
+            <tr>
+              <td>Address Line 1:</td>
+              <td><%= address_line1 %></td>
+            </tr>
+            <tr>
+              <td>Address Line 2:</td>
+              <td><%= address_line2 %></td>
+            </tr>
+          <% }else{ %>
+            <tr>
+              <td>Address Line:</td>
+              <td><%= address_line1 %></td>
+            </tr>
+          <% } %>
+          <tr>
+            <td>City:</td>
+            <td><%= city %></td>
+          </tr>
+          <tr>
+            <td>State:</td>
+            <td><%= state %></td>
+          </tr>
+          <tr>
+            <td>ZIP Code:</td>
+            <td><%= zipcode %></td>
+          </tr>
+        </table>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateAddressModal">
+            Update Your Address
+        </button>
+      </div>
+        
+    <% } %>
+
+  
+
+  </div>
+</div>
+
+<div class="modal fade" id="updateAddressModal" tabindex="-1" role="dialog" aria-labelledby="updateAddressModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateAddressModalLabel">Update Your Address</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="/updateProfile" method="POST">
+          <div class="form-group">
+            <label for="address_1">Address 1:</label>
+            <input type="text" class="form-control" name="address_1" id="address_1" value="<%= address_line1 %>" required>
+          </div>
+          <div class="form-group">
+            <label for="address_2">Address 2:</label>
+            <input type="text" class="form-control" name="address_2" id="address_2" value="<%= address_line2 %>">
+          </div>
+          <div class="form-group">
+            <label for="city">City:</label>
+            <input type="text" class="form-control" name="city" id="city" value="<%= city %>" required>
+          </div>
+          <div class="form-group">
+            <label for="state">State:</label>
+            <input type="text" class="form-control" name="state" id="state" value="<%= state %>" required>
+          </div>
+          <div class="form-group">
+            <label for="zip">ZIP Code:</label>
+            <input type="text" class="form-control" name="zip" id="zip" value="<%= zipcode %>" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top: 10px;">Update</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
+<!-- <div class="d-flex align-items-center">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 col-md-9 col-sm-12 d-flex justify-content-center align-content-center">
@@ -71,5 +229,4 @@
 <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?key=AljStGYPC2c0wdx-bBLB6DEKMphxfnbKeD98nf5NMJT7g_EFDUBTjzBxVN4-kqvX&callback=loadMapScenario' async defer></script>
 <script>
     window.onload = loadMapScenario();
-</script>
-<%- include('../partials/footer') %>
+</script> -->
