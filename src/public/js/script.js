@@ -1,156 +1,44 @@
-var searchManager;
-var locName;
-var map;
-var address = {
-    addressLine: undefined,
-    city: undefined,
-    state: undefined,
-    zipcode: undefined
-}
+mapboxgl.accessToken = 'pk.eyJ1Ijoid2lqbzkzODUiLCJhIjoiY2xoMmJ2ZTF5MWJnNTNsczJ5Njg2aXZiciJ9.3vvR40LBc68X6YmLAimb2w';
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/wijo9385/clh2oc2b5007t01r68c730bcu',
+    center: [-105.270347, 40.015793],
+    zoom: 12
+});
 
-function getMap() {
+map.on('load', async () => {
+    var response = await fetch('http://localhost:3000/get_listings');
+    var result = await response.json();
 
-    if (!navigator.geolocation) {
-        console.error("Geolocation not supported");
-        return;
-    }
+    const mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
 
-    navigator.geolocation.getCurrentPosition((position) => {
-        console.log("position: ", position);
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
+    result.forEach(listing => {
+        mapboxClient.geocoding
+            .forwardGeocode({
+                query: listing.address,
+                autocomplete: false,
+                limit: 1
+            })
+            .send()
+            .then((response) => {
+                if (
+                    !response ||
+                    !response.body ||
+                    !response.body.features ||
+                    !response.body.features.length
+                ) {
+                    console.error('Invalid response:');
+                    console.error(response);
+                    return;
+                }
+                const feature = response.body.features[0];
 
-        map = new Microsoft.Maps.Map('#myMap', {
-            credentials: 'AljStGYPC2c0wdx-bBLB6DEKMphxfnbKeD98nf5NMJT7g_EFDUBTjzBxVN4-kqvX',
-            center: new Microsoft.Maps.Location(latitude, longitude),
-            zoom: 11
-        });
+                // Create a marker and add it to the map.
+                var marker = new mapboxgl.Marker().setLngLat(feature.center).addTo(map);
 
-        var center = map.getCenter();
-
-        reverseGeocode();
-        console.log("locName: ", locName);
-    }, (err) => {
-        console.error(err.message);
-    });
-
-}
-
-function reverseGeocode() {
-    //If search manager is not defined, load the search module.
-    if (!searchManager) {
-        //Create an instance of the search manager and call the reverseGeocode function again.
-        Microsoft.Maps.loadModule('Microsoft.Maps.Search', function () {
-            searchManager = new Microsoft.Maps.Search.SearchManager(map);
-            reverseGeocode();
-        });
-    } else {
-        let center = map.getCenter();
-        var searchRequest = {
-            location: center,
-            callback: function (r) {
-                locName = r.name;
-                var pin = new Microsoft.Maps.Pushpin(center, {
-                    title: locName,
-                    color: 'red'
+                marker.getElement().addEventListener('click', () => {
+                    document.getElementById('' + listing.listing_id).scrollIntoView({behavior: 'smooth'});
                 });
-
-                map.entities.push(pin);
-            },
-            errorCallback: function (e) {
-                //If there is an error, alert the user about it.
-                alert("Unable to reverse geocode location.");
-            }
-        };
-        //Make the reverse geocode request.
-        searchManager.reverseGeocode(searchRequest);
-        console.log("locName: ", locName);
-    }
-}
-
-// document.onreadystatechange = function () {
-//     var state = document.readyState
-//     if (state == 'interactive') {
-//         document.getElementById('contents').style.visibility = "hidden";
-//     } else if (state == 'complete') {
-//         setTimeout(function () {
-//             document.getElementById('interactive');
-//             document.getElementById('load').style.visibility = "hidden";
-//             document.getElementById('contents').style.visibility = "visible";
-//         }, 2700);
-//     }
-// }
-
-function searchListings() {
-    const searchInput = document.getElementById('search-input');
-    const searchQuery = searchInput.value;
-
-    fetch(`/listings?city=${searchQuery}`)
-        .then(response => response.json())
-        .then(listings => {
-            const listingsContainer = document.querySelector('.listings-container');
-            listingsContainer.innerHTML = '';
-            listings.forEach(listing => {
-                const listingHTML = `
-            <div id="${listing.listing_id}" class="card p-2 mb-3" style="width: 100%;">
-              <img class="card-img-top" src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Card image cap">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-9">
-                    <h5 class="card-title">${listing.address_line1}</h5>
-                  </div>
-                  <div class="col-3">
-                    <h5 class="card-title text-right">$${listing.price}</h5>
-                  </div>
-                </div>
-                <p class="card-text">${listing.description}</p>
-                <a href="/listing/${listing.listing_id}" class="btn btn-primary">Apply</a>
-              </div>
-            </div>
-          `;
-                listingsContainer.insertAdjacentHTML('beforeend', listingHTML);
             });
-        })
-        .catch(error => console.error(error));
-}
-
-function loadMapScenario(){
-    map = new Microsoft.Maps.Map(document.getElementById('hiddenMap'), {
-        center: new Microsoft.Maps.Location(47.606209, -122.332071),
-        zoom: 12
     });
-
-    Microsoft.Maps.loadModule('Microsoft.Maps.AutoSuggest', function () {
-        var options = {
-            maxResults: 4,
-            map: map
-        };
-        var manager = new Microsoft.Maps.AutosuggestManager(options);
-        manager.attachAutosuggest('#searchBox', '#searchBoxContainer', selectedSuggestion);
-    });
-
-    function selectedSuggestion(result) {
-        Microsoft.Maps.loadModule('Microsoft.Maps.Search', function () {
-            var options = {
-                callback: () => {
-                    
-                },
-                includeNeighborhood: true,
-            }
-            searchManager = new Microsoft.Maps.Search.SearchManager(map);
-            geocodeQuery(query);
-        });
-
-        address.addressLine = result.address.addressLine;
-        address.city = result.address.locality;
-        address.state = result.address.countryRegionISO2;
-        address.zipcode = result.address.postalCode;
-
-        document.getElementById('showAddress').style.display = 'block';
-        document.getElementById('tempAddress').innerHTML = address.addressLine + "<br>" + address.city + ", " + address.state + " " + address.zipcode;
-    }
-}
-
-function changeAddress(propertyId){
-    fetch('/update_property/${searchQuery}')
-}
+});

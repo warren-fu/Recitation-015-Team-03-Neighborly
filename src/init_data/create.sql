@@ -5,19 +5,25 @@ CREATE TABLE IF NOT EXISTS users (
   first_name VARCHAR(50) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
   property_id NUMERIC,
-  status_id NUMERIC,
   password VARCHAR(60) NOT NULL,
   email VARCHAR(60) NOT NULL,
   phone_number VARCHAR(60),
   gender VARCHAR(60),
-  birthdate DATE
+  birthdate DATE,
+  interests VARCHAR(100) []
 );
 
-DROP TABLE IF EXISTS user_to_listing CASCADE;
+DROP TABLE IF EXISTS applications CASCADE;
 
-CREATE TABLE IF NOT EXISTS users_to_listing (
+CREATE TABLE IF NOT EXISTS applications (
+  application_id SERIAL NOT NULL,
+  listing_id NUMERIC NOT NULL,
+  property_id NUMERIC NOT NULL,
+  datetime TIMESTAMP NOT NULL,
   username VARCHAR(50) NOT NULL,
-  listing_id NUMERIC NOT NULL
+  prompt_1 VARCHAR(65535) NOT NULL,
+  prompt_2 VARCHAR(65535) NOT NULL,
+  prompt_3 VARCHAR(65535) NOT NULL
 );
 
 DROP TABLE IF EXISTS listing CASCADE;
@@ -27,58 +33,23 @@ CREATE TABLE IF NOT EXISTS listing (
   username VARCHAR(50) NOT NULL,
   property_id NUMERIC NOT NULL,
   price DECIMAL NOT NULL,
-  description VARCHAR(65535)
+  description VARCHAR(65535),
+  question_1 VARCHAR(65535) NOT NULL,
+  question_2 VARCHAR(65535) NOT NULL,
+  question_3 VARCHAR(65535) NOT NULL,
+  images VARCHAR(690) []
 );
 
 DROP TABLE IF EXISTS properties CASCADE;
 
 CREATE TABLE IF NOT EXISTS properties (
   property_id SERIAL primary key,
-  neighborhood_id NUMERIC NOT NULL,
+  neighborhood VARCHAR(150) NOT NULL,
   address_line1 VARCHAR(150) NOT NULL,
   address_line2 VARCHAR(150),
   city VARCHAR(150) NOT NULL,
   state VARCHAR(20) NOT NULL,
-  zipcode NUMERIC NOT NULL
-);
-
-DROP TABLE IF EXISTS reviews CASCADE;
-
-CREATE TABLE IF NOT EXISTS reviews (
-  review_id SERIAL primary key,
-  username VARCHAR(50) NOT NULL,
-  property_id NUMERIC NOT NULL,
-  subject VARCHAR(690) NOT NULL,
-  description VARCHAR(65535) NOT NULL,
-  rating NUMERIC NOT NULL
-);
-
-DROP TABLE IF EXISTS prompts CASCADE;
-
-CREATE TABLE IF NOT EXISTS prompts (
-  prompt_id SERIAL primary key,
-  prompt_value VARCHAR(65535) NOT NULL
-);
-
-DROP TABLE IF EXISTS info CASCADE;
-
-CREATE TABLE IF NOT EXISTS info (
-  username VARCHAR(50) NOT NULL,
-  prompt_id NUMERIC NOT NULL,
-  answer VARCHAR(10000) NOT NULL
-);
-DROP TABLE IF EXISTS status CASCADE;
-
-CREATE TABLE IF NOT EXISTS status (
-  status_id NUMERIC primary key,
-  status_value VARCHAR(65535) NOT NULL
-);
-
-DROP TABLE IF EXISTS neighborhood CASCADE;
-
-CREATE TABLE IF NOT EXISTS neighborhood (
-  neighborhood_id NUMERIC primary key,
-  neighborhood_value VARCHAR(65535) NOT NULL
+  zipcode VARCHAR(5) NOT NULL
 );
 
 DROP TABLE IF EXISTS replies CASCADE;
@@ -102,8 +73,36 @@ CREATE TABLE IF NOT EXISTS posts (
   post_id SERIAL primary key,
   datetime TIMESTAMP NOT NULL,
   username VARCHAR(50) NOT NULL,
-  neighborhood_id NUMERIC NOT NULL,
+  neighborhood VARCHAR(150) NOT NULL,
   subject VARCHAR(690) NOT NULL,
   description VARCHAR(65535) NOT NULL,
   votes NUMERIC NOT NULL
+);
+
+DROP TABLE IF EXISTS hobbies CASCADE;
+
+CREATE TABLE IF NOT EXISTS hobbies (
+  hobby_id SERIAL primary key,
+  hobby VARCHAR(100) NOT NULL
+);
+
+DROP TABLE IF EXISTS tv_shows CASCADE;
+
+CREATE TABLE IF NOT EXISTS tv_shows (
+  show_id SERIAL primary key,
+  show VARCHAR(100) NOT NULL
+);
+
+DROP TABLE IF EXISTS movies CASCADE;
+
+CREATE TABLE IF NOT EXISTS movies (
+  movie_id SERIAL primary key,
+  movie VARCHAR(100) NOT NULL
+);
+
+DROP TABLE IF EXISTS artists CASCADE;
+
+CREATE TABLE IF NOT EXISTS artists (
+  artist_id SERIAL primary key,
+  artist VARCHAR(100) NOT NULL
 );
