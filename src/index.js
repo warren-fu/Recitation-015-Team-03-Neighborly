@@ -135,11 +135,7 @@ app.post("/login", async (req, res) => {
   // get the student_id based on the emailid
   
   db.one(query, [username])
-<<<<<<< HEAD
     .then( async (data) => {
-=======
-    .then((data) => {
->>>>>>> d2cdb7ec63627bd10331305d88f7ef91a082a049
       user.username = data.username;
       user.property_id = data.property_id;
       user.password = data.password;
