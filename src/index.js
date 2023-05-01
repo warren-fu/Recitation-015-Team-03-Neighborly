@@ -840,62 +840,53 @@ app.get('/listing/:lid', (req, res) => {
       task.one(user_query, [req.session.user.username])
     ]);
   })
-  .then(data => {
+  .then(async data => {
     var addy = data[0].address_line1+ ", " + data[0].city+ ", " + data[0].state;
     console.log(addy);
-    // const zillowSearchOptions = {
-    //   method: 'GET',
-    //   url: 'https://zillow56.p.rapidapi.com/search',
-    //   params: {
-    //     location: addy
-    //   },
-    //   headers: {
-    //     'content-type': 'application/octet-stream',
-    //     'X-RapidAPI-Key': '51110bf831mshd401637aba1666dp184555jsnf920fb6f82f1',
-    //     'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
-    //   }
-    // };
-    // try {
-    //   const response = await axios.request(zillowSearchOptions);
-    //   var zpid = response.data.zpid;
-    //   // console.log("zpid: " + zpid);
-    //   const zillowGetUrl = {
-    //     method: 'GET',
-    //     url: 'https://zillow56.p.rapidapi.com/property',
-    //     params: {zpid: `${zpid}`,
-    //     headers: {
-    //       'content-type': 'application/octet-stream',
-    //       'X-RapidAPI-Key': '51110bf831mshd401637aba1666dp184555jsnf920fb6f82f1',
-    //       'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
-    //     }
-    //   }
-    //   };
-    //   try {
-    //     const response2 = await axios.request(zillowGetUrl);
-    //     console.log(response2.data);
-    //     console.log(property_id);
-    //     const query =
-    //       `SELECT username, description, price FROM listing WHERE property_id = ${property_id};`;
-    //     db.any(query)
-    //       .then((data) => {
-    //         res.render("pages/listing", {response2, data, addy});
-            res.render('pages/listing', {
-              fixed_navbar: false,
-              username: user.username,
-              listing: data[0],
-              user: data[1]
-              // url: 
-            });
-    //       })
-    //       .catch(function () {
-    //         return res.redirect("/explore");
-    //       });
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    // }
+    const zillowSearchOptions = {
+      method: 'GET',
+      url: 'https://zillow56.p.rapidapi.com/search',
+      params: {
+        location: addy
+      },
+      headers: {
+        'content-type': 'application/octet-stream',
+        'X-RapidAPI-Key': '51110bf831mshd401637aba1666dp184555jsnf920fb6f82f1',
+        'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
+      }
+    };
+    try {
+      const response = await axios.request(zillowSearchOptions);
+      var zpid = response.data.zpid;
+      console.log(zpid);
+      // console.log("zpid: " + zpid);
+      const zillowGetUrl = {
+        method: 'GET',
+        url: 'https://zillow56.p.rapidapi.com/property',
+        params: {zpid: `13184493`},
+        headers: {
+          'content-type': 'application/octet-stream',
+          'X-RapidAPI-Key': '159d835589msh6a85fe63b98a800p143d40jsn27485d976825',
+          'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
+        }
+      
+      };
+      try {
+        const response2 = await axios.request(zillowGetUrl);
+        console.log(response2.data.hdpUrl);
+        res.render('pages/listing', {
+          fixed_navbar: false,
+          username: user.username,
+          listing: data[0],
+          user: data[1],
+          url: response2.data.hdpUrl
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   })
   .catch(err => {
     res.render('pages/listing', {
