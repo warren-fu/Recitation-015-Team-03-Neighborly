@@ -156,7 +156,7 @@ app.post("/login", async (req, res) => {
       res.redirect("/explore");
     })
     .catch((err) => {
-      res.redirect("/login");
+      res.render('pages/login', {error:true, message:"Incorrect password"});
     });
 });
 
