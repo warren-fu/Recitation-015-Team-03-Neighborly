@@ -79,6 +79,16 @@ CREATE TABLE IF NOT EXISTS posts (
   votes NUMERIC NOT NULL
 );
 
+DROP TABLE IF EXISTS interests CASCADE;
+
+CREATE TABLE IF NOT EXISTS interests (
+  interests_id SERIAL PRIMARY KEY,
+  username VARCHAR(50) NOT NULL,
+  education VARCHAR(25),
+  job VARCHAR(25),
+  hobby VARCHAR(25)
+);
+
 DROP TABLE IF EXISTS hobbies CASCADE;
 
 CREATE TABLE IF NOT EXISTS hobbies (

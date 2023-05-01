@@ -10,8 +10,9 @@ const session = require("express-session"); // To set the session object. To sto
 const bcrypt = require("bcrypt"); //  To hash passwords
 const axios = require("axios"); // To make HTTP requests from our server. We'll learn more about it in Part B.
 const { json } = require("body-parser");
-const fileUpload = require('express-fileupload');
-const fs = require('fs');
+const fs = require("fs");
+const busboy = require("connect-busboy");
+const { errorMonitor } = require("events");
 
 const user = {
   username: undefined,
@@ -57,8 +58,8 @@ db.connect()
 app.set("view engine", "ejs"); // set the view engine to EJS
 app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
 
-// for file uploading
-app.use(fileUpload());
+// // for file uploading
+// app.use(fileUpload());
 
 // initialize session variables
 app.use(
@@ -597,6 +598,92 @@ app.post('/downvote', (req, res) => {
   })
 });
 
+app.get('/interests', (req, res) => {
+  const username = req.session.user.username;
+  const query = 'SELECT interests.interests_id, interests.education, interests.job, interests.hobby FROM interests JOIN users ON interests.username = users.username WHERE users.username = $1 ORDER BY interests.interests_id DESC LIMIT 1;';
+
+  db.any(query, [username])
+    .then(data => {
+      // console.log(data);
+      res.render('pages/interests', {
+        fixed_navbar: false,
+        propertyId: user.property_id,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        phone_number: user.phone_number,
+        gender: user.gender,
+        birthdate: user.birthdate,
+        status: user.status_id,
+        interests_id: data[0].interests_id,
+        education: data[0].education,
+        job: data[0].job,
+        hobby: data[0].hobby
+      });
+    })
+    .catch(err => {
+      res.render('pages/interests', {
+        fixed_navbar: false,
+        propertyId: user.property_id,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        phone_number: user.phone_number,
+        gender: user.gender,
+        birthdate: user.birthdate,
+        status: user.status_id,
+        interests_id: '',
+        education: '',
+        job: '',
+        hobby: ''
+      });
+    });
+});
+
+app.post('/addInterests', (req, res) => {
+  const username = req.session.user.username, education = req.body.education, job = req.body.job, hobby = req.body.hobby;
+  const query = 'INSERT INTO interests (username, education, job, hobby) VALUES ($1, $2, $3, $4) RETURNING *;';
+
+  db.any(query, [username, education, job, hobby])
+    .then(data => {
+      res.render('pages/interests', {
+        fixed_navbar: false,
+        propertyId: user.property_id,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        phone_number: user.phone_number,
+        gender: user.gender,
+        birthdate: user.birthdate,
+        status: user.status_id,
+        interests_id: data[0].interests_id,
+        education: data[0].education,
+        job: data[0].job,
+        hobby: data[0].hobby
+      });
+    })
+    .catch(err => {
+      res.render('pages/interests', {
+        fixed_navbar: false,
+        propertyId: user.property_id,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        phone_number: user.phone_number,
+        gender: user.gender,
+        birthdate: user.birthdate,
+        status: user.status_id,
+        interests_id: '',
+        education: '',
+        job: '',
+        hobby: ''
+      });
+    });
+})
 app.get('/applications', (req, res) => {
   const query_users = 'SELECT a.application_id, p.address_line1, l.price, a.datetime FROM applications AS a RIGHT JOIN listing AS l ON a.listing_id = l.listing_id INNER JOIN properties AS p ON a.property_id = p.property_id WHERE a.username = $1';
   const query_listing = 'SELECT a.application_id, users.first_name, users.last_name, users.email, a.datetime FROM listing AS l LEFT JOIN applications AS a ON l.listing_id = a.listing_id INNER JOIN users ON users.username = a.username WHERE l.username = $1';
