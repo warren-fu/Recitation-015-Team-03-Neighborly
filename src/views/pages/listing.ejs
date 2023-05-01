@@ -1,105 +1,78 @@
-<%- include ('../partials/head') %>
-  <%- include ('../partials/menu') %>
-    <%- include ('../partials/message') %>
-      <div class="container mt-4">
-        <div class="row justify-content-center" style="top: 0;">
-          <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel"
-            style="width: 400px; height: 400px;">
-            <div class="carousel-indicators">
-              <% data.photos.forEach((photo, index)=> { %>
-                <button type="button" data-bs-target="#carouselExampleControls" data-bs-slide-to="<%= index %>" <%
-                  if(index===0) { %>class="active"<% } %> aria-current="true" aria-label="Slide <%= index + 1 %>
-                      "></button>
-                <% }); %>
-            </div>
-            <div class="carousel-inner">
-              <% data.photos.forEach((photo, index)=> { %>
-                <div class="carousel-item <% if(index === 0) { %>active<% } %>">
-                  <img src="<%= photo.href %>" class="d-block w-100 h-100" alt="Slide <%= index + 1 %>">
-                </div>
-                <% }); %>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
-              data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
-              data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-          </div>
+<%- include ('../partials/menu') %>
+<%- include ('../partials/message') %>
+<div class="d-flex align-items-center mb-5 mt-3">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-12 col-sm-12">
+        <div class="d-flex justify-content-between">
+          <h3>
+            <%- locals.listing.address_line1 %>
+          </h3>
+          <h3>
+            $<%- locals.listing.price %>
+          </h3>
         </div>
-      </div>
-
-      <div class="d-flex align-items-center mt-4" style="top: 0;">
+        <div id="carouselExample" class="carousel slide mb-3" style="width: 100%;">
+          <div class="carousel-inner">
+            <% locals.listing.images.forEach(image=> {%>
+              <div class="carousel-item active">
+                <img src="<%- image %>" class="d-block w-100" alt="...">
+              </div>
+              <% }); %>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
         <div class="container">
-          <div class="row justify-content-center" style="top: 0;">
-            <div class="col-8">
-              <div class="row">
-                <div class="col-6">
-                  <h1 style="white-space: nowrap;">
-                    <%= data.address.line %>, <%= data.address.city %>, <%= data.address.state_code %>
-                  </h1>
-                </div>
-                <div class="col-6 text-end">
-                  <h1>Price: <%-data.price%></h1>
-                </div>
-              </div>
-              <hr class="my-4">
-            </div>
-          </div>
-
-          <div class="row justify-content-center">
-            <div class="col-8 text-start">
-              <h1>Description</h1>
-              <div class="card" id="description-card">
-                <div class="card-body">
-                  <p><%-data.description%></p>
-                </div>
-              </div>
-              <hr class="my-4">
-            </div>
-          </div>
-
-          <div class="row justify-content-center">
-            <div class="col-8 text-start">
-              <h1>Features</h1>
-              <div class="card" id="features-card">
-                <div class="card-body">
-                  <ul>
-                    <li><a><%-data.prop_type%></a></li>
-                    <li><a>Year Built: <%-data.year_built%></a></li>
-                    <li><a>Size: <%-data.sqft%> sqft</a></li>
-                    <% data.features.forEach(feature=> { %>
-                      <li><a><%-feature.text%></a></li>
-                      <% }); %>
-                  </ul>
-                </div>
-              </div>
-              <hr class="my-4">
-            </div>
-          </div>
-          <div class="row justify-content-center">
-            <div class="col-8">
-              <a href="/applications<%= data.id %>" class="btn btn-primary">Apply Now</a>
-            </div>
-          </div>
-          <script>
-            const featuresCard = document.querySelector("#features-card");
-            const descriptionCard = document.querySelector("#description-card");
-
-            function setCardHeight() {
-              descriptionCard.style.height = featuresCard.offsetHeight + "px";
-            }
-            setCardHeight();
-            window.addEventListener("resize", setCardHeight);
-          </script>
+          <h3>Description</h3>
+          <p>
+            <%- locals.listing.description %>
+          </p>
         </div>
-      </div>
-      <div class="row justify-content-center" style="margin-bottom: 50px;">
-        <div class="col-8">
-          <%- include ('../partials/footer') %>
+        <div class="container mb-3">
+          <h3>Common Interests</h3>
+          <ul class="list-group list-group-flush">
+              <% locals.listing.interests.filter(element => user.interests.includes(element)).forEach(interest => { %> 
+                  <li class="list-group-item"><%- interest %></li>
+              <% }); %>
+          </ul>
         </div>
+        <form action="/applications/<%- locals.listing.listing_id%>/<%- locals.listing.property_id %>" method="POST">
+          <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="mb-3">
+              <%- locals.listing.question_1%>
+            </label>
+            <textarea class="form-control mb-3" id="exampleFormControlTextarea2" rows="5" style="height: 10rem"
+              name="question_1" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="mb-3">
+              <%- locals.listing.question_2%>
+            </label>
+            <textarea class="form-control mb-3" id="exampleFormControlTextarea2" rows="5" style="height: 10rem"
+              name="question_2" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="mb-3">
+              <%- locals.listing.question_3%>
+            </label>
+            <textarea class="form-control mb-3" id="exampleFormControlTextarea2" rows="5" style="height: 10rem"
+              name="question_3" required></textarea>
+          </div>
+          <div class="d-flex">
+            <button type="submit" class="btn btn-primary mr-3">Apply</button>
+          </div>
+        </form>
       </div>
+    </div>
+  </div>
+</div>
+<%- include ('../partials/footer') %>

@@ -1,0 +1,205 @@
+<%- include('../partials/head') %>
+<%- include('../partials/menu') %>
+
+<div class="container">
+    <!-- TODO: add hobbies button and allow users to choose a hobby -->
+    <div class="row justify-content-center">
+        <div class="col"></div>
+        <div class="col-7">
+            <% if (!interests_id) {%>
+                <h1><%- username %> Hobbies & Interests</h1>
+                <div class="card shadow-lg" style="margin-top: 15px;">
+                    <div class="card-header">
+                      <h5 class="card-title">Your Interests</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="alert alert-info" role="alert">
+                        No interests found.
+                      </div>
+                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_interests_modal">Add Interests</button>
+                    </div>
+                  </div>
+            <%}
+            else { %>
+                <h1><%- username %> Hobbies & Interests</h1>
+                <div class="card shadow-lg" style="margin-top: 10px;">
+                    <div class="card-header">
+                      <h5 class="card-title">Your Interests</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex align-items-center">
+                              <b>Hobby:</b>
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                              <b>Education:</b>
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <b>Job:</b>
+                              </li>
+                          </ul>
+                        </div>
+                        <div class="col-md-6">
+                          <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex align-items-center">
+                                <% if (hobby == "Select Hobby...") { %>
+                                    N/A
+                                <% } else { %>
+                                    <%- hobby %>
+                                <% } %>
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <% if (education == "Select Education...") { %>
+                                    N/A
+                                <% } else { %>
+                                    <%- education %>
+                                <% } %>
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <% if (job == "Select Job...") { %>
+                                    N/A
+                                <% } else { %>
+                                    <%- job %>
+                                <% } %>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                      <!-- trigger modal button -->
+                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#change_interests_modal" style="margin-top: 15px;">Change Interests</button>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+        <div class="col"></div>
+    </div>
+
+     <!-- Modal: add interests  -->
+     <div class="modal fade" id="add_interests_modal" tabindex="-1" aria-labelledby="addInterestsLabel" aria-hidden="true">
+        <form action="/addInterests" method="POST">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="addInterestsLabel">Add Interests</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row justify-content-center" style="padding-bottom: 10px;">
+                            <div class="col-2" style="padding-top: 5px;">
+                                Hobby
+                            </div>
+                            <div class="col">
+                                <select name="hobby" aria-label="Select Hobby" class="form-select">
+                                    <option selected>Select Hobby...</option>
+                                    <option value="Sports">Sports</option>
+                                    <option value="Drawing">Drawing</option>
+                                    <option value="Hiking">Hiking</option>
+                                    <option value="Reading">Reading</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center" style="padding-bottom: 10px;">
+                            <div class="col-2" style="padding-top: 5px;">
+                                Education
+                            </div>
+                            <div class="col">
+                                <select name="education" aria-label="Select Education" class="form-select">
+                                    <option selected>Select Education...</option>
+                                    <option value="High School">High School</option>
+                                    <option value="Undergraduate">Undergraduate</option>
+                                    <option value="Graduate">Graduate</option>
+                                    <option value="Not In School">Not In School</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center" style="padding-bottom: 10px;">
+                            <div class="col-2" style="padding-top: 5px;">
+                                Job
+                            </div>
+                            <div class="col">
+                                <select name="job" aria-label="Select Job" class="form-select">
+                                    <option selected>Select Job...</option>
+                                    <option value="Software Engineer">Software Engineer</option>
+                                    <option value="Doctor">Doctor</option>
+                                    <option value="Teacher">Teacher</option>
+                                    <option value="Sales Representative">Sales Representative</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add Interests</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+     </div>
+
+     <!-- Modal: change interests -->
+     <div class="modal fade" id="change_interests_modal" tabindex="-1" aria-labelledby="changeInterestsLabel" aria-hidden="true">
+        <form action="/addInterests" method="POST">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="changeInterestsLabel">Change Interests</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row justify-content-center" style="padding-bottom: 10px;">
+                            <div class="col-2" style="padding-top: 5px;">
+                                Hobby
+                            </div>
+                            <div class="col">
+                                <select name="hobby" aria-label="Select Hobby" class="form-select">
+                                    <option selected>Select Hobby...</option>
+                                    <option value="Sports">Sports</option>
+                                    <option value="Drawing">Drawing</option>
+                                    <option value="Hiking">Hiking</option>
+                                    <option value="Reading">Reading</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center" style="padding-bottom: 10px;">
+                            <div class="col-2" style="padding-top: 5px;">
+                                Education
+                            </div>
+                            <div class="col">
+                                <select name="education" aria-label="Select Education" class="form-select">
+                                    <option selected>Select Education...</option>
+                                    <option value="High School">High School</option>
+                                    <option value="Undergraduate">Undergraduate</option>
+                                    <option value="Graduate">Graduate</option>
+                                    <option value="Not In School">Not In School</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center" style="padding-bottom: 10px;">
+                            <div class="col-2" style="padding-top: 5px;">
+                                Job
+                            </div>
+                            <div class="col">
+                                <select name="job" aria-label="Select Job" class="form-select">
+                                    <option selected>Select Job...</option>
+                                    <option value="Software Engineer">Software Engineer</option>
+                                    <option value="Doctor">Doctor</option>
+                                    <option value="Teacher">Teacher</option>
+                                    <option value="Sales Representative">Sales Representative</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Change Interests</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+     </div>
+
+</div>
+
+<%- include('../partials/footer') %>
