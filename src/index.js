@@ -17,7 +17,6 @@ const { errorMonitor } = require("events");
 const user = {
   username: undefined,
   property_id: undefined,
-  status_id: undefined,
   password: undefined,
   first_name: undefined,
   last_name: undefined,
@@ -128,7 +127,7 @@ app.get("/login", (req, res) => {
   return res.render("pages/login");
 });
 
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
   const query = "select * from users where users.username = $1";
@@ -136,12 +135,9 @@ app.post("/login", (req, res) => {
   // get the student_id based on the emailid
   
   db.one(query, [username])
-    .then((data) => {
-      console.log(user.password);
-  console.log(req.body.password);
+    .then( async (data) => {
       user.username = data.username;
       user.property_id = data.property_id;
-      user.status_id = data.status_id;
       user.password = data.password;
       user.first_name = data.first_name;
       user.last_name = data.last_name;
@@ -151,8 +147,8 @@ app.post("/login", (req, res) => {
       user.birthdate = data.birthdate;
 
       // check if password from request matches with password in DB
-      const match = bcrypt.compare(password, user.password)
-      if (!match) res.render('pages/login', {error:true,message:"Incorrect password"});
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) res.render('pages/login', {error:true, message:"Incorrect password"});
 
       req.session.user = user;
       req.session.save();
@@ -684,6 +680,7 @@ app.post('/addInterests', (req, res) => {
       });
     });
 })
+
 app.get('/applications', (req, res) => {
   const query_users = 'SELECT a.application_id, p.address_line1, l.price, a.datetime FROM applications AS a RIGHT JOIN listing AS l ON a.listing_id = l.listing_id INNER JOIN properties AS p ON a.property_id = p.property_id WHERE a.username = $1';
   const query_listing = 'SELECT a.application_id, users.first_name, users.last_name, users.email, a.datetime FROM listing AS l LEFT JOIN applications AS a ON l.listing_id = a.listing_id INNER JOIN users ON users.username = a.username WHERE l.username = $1';
