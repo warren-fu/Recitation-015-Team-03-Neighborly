@@ -262,28 +262,81 @@ app.get('/profile', (req, res) => {
 });
 
 //TODO Work on for recieving address data and place into the tables accordingly
-app.post('/profile', (req,res) => {
+app.post('/profile', (req, res) => {
   // const userToListQuery = 'INSERT INTO ';
   // const listingQuery = 'INSERT INTO listing (listing_id, username, property_id, price, description) VALUES ($1, $2, $3, $4, $5);';
 
-const address1 = req.body.address_1;
-const address2 = req.body.address_2;
-const city = req.body.city;
-const state = req.body.state;
-const zip = req.body.zip;
+  const address1 = req.body.address_1;
+  const address2 = req.body.address_2;
+  const city = req.body.city;
+  const state = req.body.state;
+  const zip = req.body.zip;
 
-const propertyQuery = 'INSERT INTO properties (neighborhood_id, address_line1, address_line2, city, state, zipcode) VALUES ($1, $2, $3, $4, $5, $6) returning property_id;';
-db.any(propertyQuery, [1, address1, address2, city, state, zip])
-.then(data =>{
-  console.log('Data: ', data);
-  console.log('Data: ', data);
-  // Update the user's property_id in the users table
-  const updateUserQuery = 'UPDATE users SET property_id = $1 WHERE username = $2';
-  return db.none(updateUserQuery, [data[0].property_id, req.session.user.username])
+  const propertyQuery = 'INSERT INTO properties (neighborhood_id, address_line1, address_line2, city, state, zipcode) VALUES ($1, $2, $3, $4, $5, $6) returning property_id;';
+  db.any(propertyQuery, [1, address1, address2, city, state, zip])
+    .then(data => {
+      console.log('Data: ', data);
+      console.log('Data: ', data);
+      // Update the user's property_id in the users table
+      const updateUserQuery = 'UPDATE users SET property_id = $1 WHERE username = $2';
+      return db.none(updateUserQuery, [data[0].property_id, req.session.user.username])
+        .then(() => {
+          // Update the property_id in the session
+          req.session.user.property_id = data[0].property_id;
+          console.log(req.session.user.property_id);
+          return res.render('pages/profile', {
+            fixed_navbar: false,
+            propertyId: req.session.user.property_id,
+            username: req.session.user.username,
+            first_name: req.session.user.first_name,
+            last_name: req.session.user.last_name,
+            email: req.session.user.email,
+            phone_number: req.session.user.phone_number,
+            gender: req.session.user.gender,
+            birthdate: req.session.user.birthdate,
+            status: req.session.user.status_id,
+            address_line1: address1,
+            address_line2: address2,
+            city: city,
+            state: state,
+            zipcode: zip
+          });
+        });
+    })
+    .catch(err => {
+      console.log(err);
+      return res.render('pages/profile', {
+        fixed_navbar: false,
+        propertyId: req.session.user.property_id,
+        username: req.session.user.username,
+        first_name: req.session.user.first_name,
+        last_name: req.session.user.last_name,
+        email: req.session.user.email,
+        phone_number: req.session.user.phone_number,
+        gender: req.session.user.gender,
+        birthdate: req.session.user.birthdate,
+        status: req.session.user.status_id,
+        address_line1: '',
+        address_line2: '',
+        city: '',
+        state: '',
+        zipcode: '',
+        error: 'danger',
+        message: 'Invalid address has been inputed'
+      });
+    })
+});
+
+app.post('/updateProfile', (req, res) => {
+  const address1 = req.body.address_1;
+  const address2 = req.body.address_2;
+  const city = req.body.city;
+  const state = req.body.state;
+  const zip = req.body.zip;
+  const query = 'UPDATE properties SET address_line1 = $1, address_line2 = $2, city = $3, state = $4, zipcode = $5 WHERE property_id = $6 returning property_id;';
+  db.one(query, [address1, address2, city, state, zip, req.session.user.property_id])
     .then(() => {
-      // Update the property_id in the session
-      req.session.user.property_id = data[0].property_id;
-      console.log(req.session.user.property_id);
+      // console.log("It should pass");
       return res.render('pages/profile', {
         fixed_navbar: false,
         propertyId: req.session.user.property_id,
@@ -301,8 +354,7 @@ db.any(propertyQuery, [1, address1, address2, city, state, zip])
         state: state,
         zipcode: zip
       });
-    });
-})
+    })
 .catch(err =>{
   return res.render('pages/profile', {
     fixed_navbar: false,
@@ -325,56 +377,6 @@ db.any(propertyQuery, [1, address1, address2, city, state, zip])
 })
 });
 
-app.post('/updateProfile', (req,res) =>{
-  const address1 = req.body.address_1;
-  const address2 = req.body.address_2;
-  const city = req.body.city;
-  const state = req.body.state;
-  const zip = req.body.zip;
-  const query = 'UPDATE properties SET address_line1 = $1, address_line2 = $2, city = $3, state = $4, zipcode = $5 WHERE property_id = $6 returning property_id;';
-  db.one(query, [address1, address2, city, state, zip, req.session.user.property_id])
-  .then(() =>{
-    // console.log("It should pass");
-    return res.render('pages/profile', {
-      fixed_navbar: false,
-      propertyId: req.session.user.property_id,
-      username: req.session.user.username,
-      first_name: req.session.user.first_name,
-      last_name: req.session.user.last_name,
-      email: req.session.user.email,
-      phone_number: req.session.user.phone_number,
-      gender: req.session.user.gender,
-      birthdate: req.session.user.birthdate,
-      status: req.session.user.status_id,
-      address_line1: address1,
-      address_line2: address2,
-      city: city,
-      state: state,
-      zipcode: zip
-    });
-  })
-  .catch(err =>{
-    // console.log(err);
-    return res.render('pages/profile', {
-    fixed_navbar: false,
-    propertyId: req.session.user.property_id,
-    username: req.session.user.username,
-    first_name: req.session.user.first_name,
-    last_name: req.session.user.last_name,
-    email: req.session.user.email,
-    phone_number: req.session.user.phone_number,
-    gender: req.session.user.gender,
-    birthdate: req.session.user.birthdate,
-    status: req.session.user.status_id,
-    address_line1: address1,
-    address_line2: address2,
-    city: city,
-    state: state,
-    zipcode: zip,
-    error: 'danger', 
-    message: 'Invalid address to update to' });
-})
-});
 
 app.post('/add_interests', (req, res) => {
   const query = 'UPDATE users SET interests = $1 WHERE username = $2;';
@@ -838,13 +840,53 @@ app.get('/listing/:lid', (req, res) => {
       task.one(user_query, [req.session.user.username])
     ]);
   })
-  .then(data => {
-    res.render('pages/listing', {
-      fixed_navbar: false,
-      username: req.session.user.username,
-      listing: data[0],
-      user: data[1]
-    });
+  .then(async data => {
+    var addy = data[0].address_line1+ ", " + data[0].city+ ", " + data[0].state;
+    console.log(addy);
+    const zillowSearchOptions = {
+      method: 'GET',
+      url: 'https://zillow56.p.rapidapi.com/search',
+      params: {
+        location: addy
+      },
+      headers: {
+        'content-type': 'application/octet-stream',
+        'X-RapidAPI-Key': '51110bf831mshd401637aba1666dp184555jsnf920fb6f82f1',
+        'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
+      }
+    };
+    try {
+      const response = await axios.request(zillowSearchOptions);
+      var zpid = response.data.zpid;
+      console.log(zpid);
+      // console.log("zpid: " + zpid);
+      const zillowGetUrl = {
+        method: 'GET',
+        url: 'https://zillow56.p.rapidapi.com/property',
+        params: {zpid: `13184493`},
+        headers: {
+          'content-type': 'application/octet-stream',
+          'X-RapidAPI-Key': '159d835589msh6a85fe63b98a800p143d40jsn27485d976825',
+          'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
+        }
+      
+      };
+      try {
+        const response2 = await axios.request(zillowGetUrl);
+        console.log(response2.data.hdpUrl);
+        res.render('pages/listing', {
+          fixed_navbar: false,
+          username: user.username,
+          listing: data[0],
+          user: data[1],
+          url: response2.data.hdpUrl
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   })
   .catch(err => {
     res.render('pages/listing', {
