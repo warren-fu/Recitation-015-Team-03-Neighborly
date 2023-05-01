@@ -1,16 +1,15 @@
 <%- include ('../partials/head') %>
-<%- include ('../partials/message') %>
-  <div class="d-flex align-items-center" style="height: 100vh;">
-    <div class="container" >
-      <div class="row justify-content-center">
-        <div class="col-lg-4 col-md-6 col-sm-8">
-          <div class="card shadow-lg">
-            <div class="card-body">
-              <h5 class="card-title text-center mb-4">Login</h5>
-              <form action="/login" method="POST">
-                <div class="form-floating mb-3">
-                  <input type="username" class="form-control" id="username" placeholder="Username" name="username">
-                  <label for="username">Username</label>
+  <div class="blurred-bg">
+    <div class="d-flex align-items-center" style="height: 100vh;">
+      <div class="container behind-form">
+        <h1 class="text-center text-white display-2 mb-5" style="margin-top: -0vh;">Neighborly Connect</h1>
+        <div class="row justify-content-center align-items-center" style="height: 60vh;">
+          <div class="col-lg-4 col-md-6 col-sm-8" style="height: 50vh;">
+            <div class="card shadow-lg">
+              <% if (locals.message) { %>
+                <div class="alert alert-<%- locals.error ? 'danger' : 'success' %> text-center alert-dismissible fade show" role="alert">
+                  <%= message %>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <div class="form-floating mb-3">
                   <input type="password" class="form-control" id="password" placeholder="Password" name="password">
@@ -29,4 +28,4 @@
       </div>
     </div>
   </div>
-<%- include ('../partials/footer') %>
+  <%- include ('../partials/footer') %>
