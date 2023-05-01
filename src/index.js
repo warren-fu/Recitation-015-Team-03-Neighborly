@@ -10,9 +10,9 @@ const session = require("express-session"); // To set the session object. To sto
 const bcrypt = require("bcrypt"); //  To hash passwords
 const axios = require("axios"); // To make HTTP requests from our server. We'll learn more about it in Part B.
 const { json } = require("body-parser");
-const fs = require("fs");
-const busboy = require("connect-busboy");
-const { errorMonitor } = require("events");
+const fileUpload = require('express-fileupload');
+const fs = require('fs');
+
 
 const user = {
   username: undefined,
@@ -57,8 +57,8 @@ db.connect()
 app.set("view engine", "ejs"); // set the view engine to EJS
 app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
 
-// // for file uploading
-// app.use(fileUpload());
+// for file uploading
+app.use(fileUpload());
 
 // initialize session variables
 app.use(
@@ -135,7 +135,11 @@ app.post("/login", async (req, res) => {
   // get the student_id based on the emailid
   
   db.one(query, [username])
+<<<<<<< HEAD
     .then( async (data) => {
+=======
+    .then((data) => {
+>>>>>>> d2cdb7ec63627bd10331305d88f7ef91a082a049
       user.username = data.username;
       user.property_id = data.property_id;
       user.password = data.password;
@@ -178,13 +182,13 @@ app.get("/explore", (req, res) => {
   db.task(task => {
     return task.batch([
       db.any(query),
-      db.one(user_query, [user.username])
+      db.one(user_query, [req.session.user.username])
     ])
   })
   .then(data => {
     res.render("pages/explore", {
       fixed_navbar: true,
-      username: user.username,
+      username: req.session.user.username,
       listings: data[0],
       user: data[1]
     });
@@ -215,7 +219,7 @@ app.get('/profile', (req, res) => {
   const artist_query = 'SELECT artist FROM artists;';
   db.task(task => {
     return task.batch([
-      task.one(property_query, [user.username]),
+      task.one(property_query, [req.session.user.username]),
       task.any(hobby_query),
       task.any(tv_query),
       task.any(movie_query),
@@ -225,15 +229,14 @@ app.get('/profile', (req, res) => {
   .then(data => {
     res.render('pages/profile', {
       fixed_navbar: false,
-      propertyId: user.property_id,
-      username: user.username,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-      phone_number: user.phone_number,
-      gender: user.gender,
-      birthdate: user.birthdate,
-      status: user.status_id,
+      propertyId: req.session.user.property_id,
+      username: req.session.user.username,
+      first_name: req.session.user.first_name,
+      last_name: req.session.user.last_name,
+      email: req.session.user.email,
+      phone_number: req.session.user.phone_number,
+      gender: req.session.user.gender,
+      birthdate: req.session.user.birthdate,
       address_line1: data[0].address_line1,
       address_line2: data[0].address_line2,
       interests: data[0].interests,
@@ -249,14 +252,14 @@ app.get('/profile', (req, res) => {
   .catch(err => {
     res.render('pages/profile', {
       fixed_navbar: false,
-      propertyId: user.property_id,
-      username: user.username,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-      phone_number: user.phone_number,
-      gender: user.gender,
-      birthdate: user.birthdate,
+      propertyId: req.session.user.property_id,
+      username: req.session.user.username,
+      first_name: req.session.user.first_name,
+      last_name: req.session.user.last_name,
+      email: req.session.user.email,
+      phone_number: req.session.user.phone_number,
+      gender: req.session.user.gender,
+      birthdate: req.session.user.birthdate,
       message: err,
     });
   });
@@ -305,7 +308,6 @@ db.any(propertyQuery, [1, address1, address2, city, state, zip])
     });
 })
 .catch(err =>{
-  console.log(err);
   return res.render('pages/profile', {
     fixed_navbar: false,
     propertyId: req.session.user.property_id,
@@ -387,7 +389,7 @@ app.post('/add_interests', (req, res) => {
     else pg_arr += key + ', ';
   });
 
-  db.none(query, [pg_arr, user.username])
+  db.none(query, [pg_arr, req.session.user.username])
   .then(() => {
     res.redirect('/profile');
   })
@@ -403,13 +405,13 @@ app.get("/feed", (req, res) => {
   const neighborhood_query =
     "SELECT prop.neighborhood FROM properties AS prop WHERE prop.property_id = (SELECT property_id FROM users WHERE username = $1);";
 
-  db.one(neighborhood_query, [user.username])
+  db.one(neighborhood_query, [req.session.user.username])
     .then((data) => {
       db.any(query, [data.neighborhood])
         .then((results) => {
           res.render("pages/feed", {
             fixed_navbar: false,
-            username: user.username,
+            username: req.session.user.username,
             posts: results,
             neighborhood: data.neighborhood,
             comments: null,
@@ -418,7 +420,7 @@ app.get("/feed", (req, res) => {
         .catch((err) => {
           res.render("pages/feed", {
             fixed_navbar: false,
-            username: user.username,
+            username: req.session.user.username,
             posts: [
               {
                 subject: "Error",
@@ -452,11 +454,11 @@ app.post("/feed", (req, res) => {
   const neighborhood_query =
     "SELECT prop.neighborhood FROM properties AS prop WHERE prop.property_id = (SELECT property_id FROM users WHERE username = $1);";
 
-  db.one(neighborhood_query, [user.username])
+  db.one(neighborhood_query, [req.session.user.username])
     .then((data) => {
       db.any(query, [
         Date.now(),
-        user.username,
+        req.session.user.username,
         data.neighborhood,
         subject,
         description,
@@ -468,7 +470,7 @@ app.post("/feed", (req, res) => {
         .catch(() => {
           res.render("pages//feed?page=n", {
             fixed_navbar: false,
-            username: user.username,
+            username: req.session.user.username,
             error: "danger",
             message: "Post failed to upload",
             posts: [
@@ -486,7 +488,7 @@ app.post("/feed", (req, res) => {
     .catch((err) => {
       res.render("pages//feed?page=n", {
         fixed_navbar: false,
-        username: user.username,
+        username: req.session.user.username,
         error: "danger",
         message: "Post failed to upload",
         posts: [
@@ -532,7 +534,7 @@ app.post("/reply/:pid", (req, res) => {
   const query_ptor =
     "INSERT INTO post_to_replies (post_id, reply_id) VALUES ($1, $2) RETURNING *;";
 
-  db.one(query_replies, [user.username, value])
+  db.one(query_replies, [req.session.user.username, value])
     .then((data) => {
       db.one(query_ptor, [pid, data.reply_id])
         .then((data) => {
@@ -603,15 +605,14 @@ app.get('/interests', (req, res) => {
       // console.log(data);
       res.render('pages/interests', {
         fixed_navbar: false,
-        propertyId: user.property_id,
-        username: user.username,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        phone_number: user.phone_number,
-        gender: user.gender,
-        birthdate: user.birthdate,
-        status: user.status_id,
+        propertyId: req.session.user.property_id,
+        username: req.session.user.username,
+        first_name: req.session.user.first_name,
+        last_name: req.session.user.last_name,
+        email: req.session.user.email,
+        phone_number: req.session.user.phone_number,
+        gender: req.session.user.gender,
+        birthdate: req.session.user.birthdate,
         interests_id: data[0].interests_id,
         education: data[0].education,
         job: data[0].job,
@@ -621,15 +622,15 @@ app.get('/interests', (req, res) => {
     .catch(err => {
       res.render('pages/interests', {
         fixed_navbar: false,
-        propertyId: user.property_id,
-        username: user.username,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        phone_number: user.phone_number,
-        gender: user.gender,
-        birthdate: user.birthdate,
-        status: user.status_id,
+        propertyId: req.session.user.property_id,
+        username: req.session.user.username,
+        first_name: req.session.user.first_name,
+        last_name: req.session.user.last_name,
+        email: req.session.user.email,
+        phone_number: req.session.user.phone_number,
+        gender: req.session.user.gender,
+        birthdate: req.session.user.birthdate,
+        status: req.session.user.status_id,
         interests_id: '',
         education: '',
         job: '',
@@ -646,15 +647,14 @@ app.post('/addInterests', (req, res) => {
     .then(data => {
       res.render('pages/interests', {
         fixed_navbar: false,
-        propertyId: user.property_id,
-        username: user.username,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        phone_number: user.phone_number,
-        gender: user.gender,
-        birthdate: user.birthdate,
-        status: user.status_id,
+        propertyId: req.session.user.property_id,
+        username: req.session.user.username,
+        first_name: req.session.user.first_name,
+        last_name: req.session.user.last_name,
+        email: req.session.user.email,
+        phone_number: req.session.user.phone_number,
+        gender: req.session.user.gender,
+        birthdate: req.session.user.birthdate,
         interests_id: data[0].interests_id,
         education: data[0].education,
         job: data[0].job,
@@ -664,15 +664,14 @@ app.post('/addInterests', (req, res) => {
     .catch(err => {
       res.render('pages/interests', {
         fixed_navbar: false,
-        propertyId: user.property_id,
-        username: user.username,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        phone_number: user.phone_number,
-        gender: user.gender,
-        birthdate: user.birthdate,
-        status: user.status_id,
+        propertyId: req.session.user.property_id,
+        username: req.session.user.username,
+        first_name: req.session.user.first_name,
+        last_name: req.session.user.last_name,
+        email: req.session.user.email,
+        phone_number: req.session.user.phone_number,
+        gender: req.session.user.gender,
+        birthdate: req.session.user.birthdate,
         interests_id: '',
         education: '',
         job: '',
@@ -687,14 +686,14 @@ app.get('/applications', (req, res) => {
 
   db.task(task => {
     return task.batch([
-      task.any(query_users, [user.username]),
-      task.any(query_listing, [user.username])
+      task.any(query_users, [req.session.user.username]),
+      task.any(query_listing, [req.session.user.username])
     ]);
   })
   .then(data => {
     res.render('pages/applications', {
       fixed_navbar: false,
-      username: user.username,
+      username: req.session.user.username,
       applications: data[0],
       listing_applications: data[1],
     });
@@ -702,7 +701,7 @@ app.get('/applications', (req, res) => {
   .catch(err => {
     res.render('pages/applications', {
       fixed_navbar: false,
-      username: user.username,
+      username: req.session.user.username,
       message: err
     });
   });
@@ -722,14 +721,13 @@ app.get('/applications/:user/:aid', (req, res) => {
   db.task(task => {
     return task.batch([
       task.one(query, [app_id]),
-      task.one(user_query, [user.username])
+      task.one(user_query, [req.session.user.username])
     ]);
   })
   .then(data => {
-    console.log(data);
     res.render('pages/application', {
       fixed_navbar: false,
-      username: user.username,
+      username: req.session.user.username,
       application: data[0],
       user: data[1]
     });
@@ -737,7 +735,7 @@ app.get('/applications/:user/:aid', (req, res) => {
   .catch(err => {
     res.render('pages/application', {
       fixed_navbar: false,
-      username: user.username,
+      username: req.session.user.username,
       message: err
     });
   });
@@ -749,7 +747,7 @@ app.post('/applications/:lid/:pid', (req, res) => {
   const prop_id = req.params.pid;
   const query = 'INSERT INTO applications (listing_id, property_id, datetime, username, prompt_1, prompt_2, Prompt_3) VALUES ($1, $2, to_timestamp($3 / 1000.0), $4, $5, $6, $7);';
 
-  db.none(query, [list_id, prop_id, Date.now(), user.username, question_1, question_2, question_3])
+  db.none(query, [list_id, prop_id, Date.now(), req.session.user.username, question_1, question_2, question_3])
   .then(() => {
     res.redirect('/applications');
   })
@@ -761,18 +759,18 @@ app.post('/applications/:lid/:pid', (req, res) => {
 app.get('/add_listing', (req, res) => {
   const query = 'SELECT prop.address_line1 FROM users JOIN properties AS prop ON prop.property_id = users.property_id WHERE users.username = $1;';
 
-  db.one(query, [user.username])
+  db.one(query, [req.session.user.username])
   .then(data => {
     res.render('pages/add_listing', {
       fixed_navbar: false,
-      username: user.username,
+      username: req.session.user.username,
       address_line1: data.address_line1
     });
   })
   .catch(err => {
     res.render('pages/add_listing', {
       fixed_navbar: false,
-      username: user.username,
+      username: req.session.user.username,
       address_line1: err
     });
   });
@@ -781,7 +779,7 @@ app.get('/add_listing', (req, res) => {
 app.post('/add_listing', (req, res) => {
   const query = 'INSERT INTO listing (username, property_id, price, description, question_1, question_2, question_3, images) VALUES ($1, $2, $3, $4, $5, $6, $7, \'{}\') RETURNING *;';
 
-  db.one(query, [user.username, user.property_id, parseInt(req.body.price), req.body.description, req.body.question1, req.body.question2, req.body.question3])
+  db.one(query, [req.session.user.username, req.session.user.property_id, parseInt(req.body.price), req.body.description, req.body.question1, req.body.question2, req.body.question3])
   .then(data => {
     var folderName = '/public/img/listings/' + data.listing_id ;
     if (!fs.existsSync(__dirname + folderName)) {
@@ -823,7 +821,7 @@ app.post('/add_listing', (req, res) => {
     });
     update_query += '}\' WHERE username = $1;';
 
-    db.none(update_query, [user.username])
+    db.none(update_query, [req.session.user.username])
     .then(() => {
        res.redirect('/applications');
     });
@@ -841,13 +839,13 @@ app.get('/listing/:lid', (req, res) => {
   db.task(task => {
     return task.batch([
       task.one(query, [list_id]),
-      task.one(user_query, [user.username])
+      task.one(user_query, [req.session.user.username])
     ]);
   })
   .then(data => {
     res.render('pages/listing', {
       fixed_navbar: false,
-      username: user.username,
+      username: req.session.user.username,
       listing: data[0],
       user: data[1]
     });
@@ -855,7 +853,7 @@ app.get('/listing/:lid', (req, res) => {
   .catch(err => {
     res.render('pages/listing', {
       fixed_navbar: false,
-      username: user.username,
+      username: req.session.user.username,
       message: err
     });
   });
@@ -870,9 +868,9 @@ app.post('/change_address', async (req, res) => {
     url: 'https://api.mapbox.com/geocoding/v5/mapbox.places/' + address_line1.replaceAll(' ', '%20') + '%20' + city + '%20' + state + '.json?limit=1&access_token=' + process.env.MAPBOX_ACCESS_TOKEN,
     method: 'GET'
   }).then(results => {
-    db.none(query, [address_line1, address_line2,results.data.features[0].context[0].text ,city, state, zipcode, user.username])
+    db.none(query, [address_line1, address_line2,results.data.features[0].context[0].text ,city, state, zipcode, req.session.user.username])
     .then(() => {
-      db.one(check_query, [user.username])
+      db.one(check_query, [req.session.user.username])
       .then((data) => {
         res.redirect('/profile');
       });
