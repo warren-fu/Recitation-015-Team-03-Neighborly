@@ -1,40 +1,79 @@
 <%- include ('../partials/head') %>
 <%- include ('../partials/menu') %>
 <%- include ('../partials/message') %>
-<main>
-  <div class="d-flex align-items-center" style="height: 100vh">
-    <div class="container">
-      <div class="row justify-content-center" top="50px">
-        <% var addr = data.address.line + ", " + data.address.city + ", " +
-        data.address.state_code; data.photos.forEach(photo => { %>
-        <!-- <div style="top:50px; position: absolute; padding-bottom: 56.25%; width: 75%"> -->
-        <img style="width: 25%; height: 25%" src="<%-photo.href%>" />
-        <!-- </div> -->
-
-        <% }); %>
-      </div>
-      <div class="row justify-content-center">
-        <div class="col">
-          <h1><%-addr%></h1>
+<div class="d-flex align-items-center mb-5 mt-3">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-12 col-sm-12">
+        <div class="d-flex justify-content-between">
+          <h3>
+            <%- locals.listing.address_line1 %>
+          </h3>
+          <h3>
+            $<%- locals.listing.price %>
+          </h3>
         </div>
-        <div class="col">
-          <h1>Price: <%-data.price%></h1>
+        <div id="carouselExample" class="carousel slide mb-3" style="width: 100%;">
+          <div class="carousel-inner">
+            <% locals.listing.images.forEach(image=> {%>
+              <div class="carousel-item active">
+                <img src="<%- image %>" class="d-block w-100" alt="...">
+              </div>
+              <% }); %>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
         </div>
-      </div>
-      <div class="row justify-content-center">
-        <h1>Description:</h1>
-        <p><%-data.description%></p>
-      </div>
-      <div class="row justify-content-center">
-        <h1>Features:</h1>
-        <a><%-data.prop_type%></a>
-        <a>Year Built: <%-data.year_built%></a>
-        <a>Size: <%-data.sqft%> sqft</a>
-        <%data.features.forEach(feature => { %>
-        <a><%-feature.text%></a>
-        <% }); %>
+        <div class="container">
+          <h3>Description</h3>
+          <p>
+            <%- locals.listing.description %>
+          </p>
+        </div>
+        <div class="container mb-3">
+          <h3>Common Interests</h3>
+          <ul class="list-group list-group-flush">
+              <% locals.listing.interests.filter(element => user.interests.includes(element)).forEach(interest => { %> 
+                  <li class="list-group-item"><%- interest %></li>
+              <% }); %>
+          </ul>
+        </div>
+        <form action="/applications/<%- locals.listing.listing_id%>/<%- locals.listing.property_id %>" method="POST">
+          <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="mb-3">
+              <%- locals.listing.question_1%>
+            </label>
+            <textarea class="form-control mb-3" id="exampleFormControlTextarea2" rows="5" style="height: 10rem"
+              name="question_1" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="mb-3">
+              <%- locals.listing.question_2%>
+            </label>
+            <textarea class="form-control mb-3" id="exampleFormControlTextarea2" rows="5" style="height: 10rem"
+              name="question_2" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="mb-3">
+              <%- locals.listing.question_3%>
+            </label>
+            <textarea class="form-control mb-3" id="exampleFormControlTextarea2" rows="5" style="height: 10rem"
+              name="question_3" required></textarea>
+          </div>
+          <div class="d-flex">
+            <button type="submit" class="btn btn-primary mr-3">Apply</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
-</main>
+</div>
 <%- include ('../partials/footer') %>
