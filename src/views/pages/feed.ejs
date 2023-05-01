@@ -3,19 +3,8 @@
 <%- include ('../partials/message') %>
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <div class="d-flex justify-content-center">
-        <a class="nav-link active m-3" href="/feed?page=n">My Neighborhood</a>
-        <a class="nav-link m-3" href="/feed?page=u">My Posts</a>
-        <div class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle m-3" href="#" id="navbarDropdown" role="button"
-                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Sort By
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Newest</a>
-                <a class="dropdown-item" href="#">Oldest</a>
-                <a class="dropdown-item" href="#">Likes</a>
-            </div>
-        </div>
+        <a class="nav-link active m-3" href="#"><%- locals.neighborhood %></a>
+        <a class="nav-link m-3" href="#">My Posts</a>
     </div>
     <div class="d-flex align-items-center">
         <div class="container">

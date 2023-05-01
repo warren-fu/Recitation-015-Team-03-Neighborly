@@ -1,6 +1,6 @@
 <%- include('../partials/head') %>
 <%- include('../partials/menu') %>
-<div class="d-flex align-items-center">
+<div class="d-flex align-items-center mb-5 mt-3">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 col-md-9 col-sm-12 d-flex justify-content-center align-content-center">
@@ -20,56 +20,142 @@
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center mb-3">
             <div class="col-lg-8 col-md-9 col-sm-12">
-                <div class="d-flex justify-content-between">
-                    <h1 class="mb-4">Address</h1>
-                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#addressModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor"
-                            class="bi bi-plus" viewBox="0 0 16 16">
-                            <path
-                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                        </svg>
-                    </button>
-                </div>
-                <% if(!propertyId){ %>
-                    <p class="text-secondary">No Address Found</p>
-                    <% }else{ %>
-                        <h3 class="text-secondary">
-                            <%- address_line1 %> <br>
-                                <%- city %>, <%- state %>
-                                        <%- zipcode %>
-                        </h3>
-                        <% } %>
+                <h2>Your Address</h2>
+                <hr/>
+                <form action="/change_address" method="POST">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="address_line1" name="address_line1" value="<%- address_line1 %>" required>
+                        <label for="address_line1">Address Line 1</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="address_line1" name="address_line2" value="<%- address_line2 %>">
+                        <label for="address_line2">Address Line 2</label>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="form-floating col-5">
+                            <input type="text" class="form-control" id="address_line1" name="city" value="<%- city %>">
+                            <label for="address_line2">City</label>
+                        </div>
+                        <div class="form-floating col-3">
+                            <select class="form-control" name="state">
+                                <option value="<%- state %>"><%- state %></option>
+                                <option value="AL">AL</option>
+                                <option value="AK">AK</option>
+                                <option value="AR">AR</option>
+                                <option value="AZ">AZ</option>
+                                <option value="CA">CA</option>
+                                <option value="CO">CO</option>
+                                <option value="CT">CT</option>
+                                <option value="DC">DC</option>
+                                <option value="DE">DE</option>
+                                <option value="FL">FL</option>
+                                <option value="GA">GA</option>
+                                <option value="HI">HI</option>
+                                <option value="IA">IA</option>
+                                <option value="ID">ID</option>
+                                <option value="IL">IL</option>
+                                <option value="IN">IN</option>
+                                <option value="KS">KS</option>
+                                <option value="KY">KY</option>
+                                <option value="LA">LA</option>
+                                <option value="MA">MA</option>
+                                <option value="MD">MD</option>
+                                <option value="ME">ME</option>
+                                <option value="MI">MI</option>
+                                <option value="MN">MN</option>
+                                <option value="MO">MO</option>
+                                <option value="MS">MS</option>
+                                <option value="MT">MT</option>
+                                <option value="NC">NC</option>
+                                <option value="NE">NE</option>
+                                <option value="NH">NH</option>
+                                <option value="NJ">NJ</option>
+                                <option value="NM">NM</option>
+                                <option value="NV">NV</option>
+                                <option value="NY">NY</option>
+                                <option value="ND">ND</option>
+                                <option value="OH">OH</option>
+                                <option value="OK">OK</option>
+                                <option value="OR">OR</option>
+                                <option value="PA">PA</option>
+                                <option value="RI">RI</option>
+                                <option value="SC">SC</option>
+                                <option value="SD">SD</option>
+                                <option value="TN">TN</option>
+                                <option value="TX">TX</option>
+                                <option value="UT">UT</option>
+                                <option value="VT">VT</option>
+                                <option value="VA">VA</option>
+                                <option value="WA">WA</option>
+                                <option value="WI">WI</option>
+                                <option value="WV">WV</option>
+                                <option value="WY">WY</option>
+                            </select>
+                            <label for="state">State</label>
+                        </div>
+                        <div class="form-floating col-4">
+                            <input type="text" class="form-control" id="address_line1" name="zipcode" value="<%- zipcode %>">
+                            <label for="zipcode">Postal Code</label>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary mr-3">Change Address</button>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
-</div>
-<div class="modal fade" id="addressModal" tabindex="-1" role="dialog" aria-labelledby="addressModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Change Address</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id='searchBoxContainer'>
-                    <input class="form-control" placeholder="Search for Address" type='text' id='searchBox' />
-                </div>
-                <div id="hiddenMap" style="display:none;"></div>
-            </div>
-            <div class="m-3" id="showAddress" style="display:none;">
-                <h3 id="tempAddress" class="text-secondary"></h3>
-                <button class="btn btn-primary" onclick="changeAddress(<%- propertyId %>)">Change Address</button>
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-9 col-sm-12">
+                <h2>Personal Info</h2>
+                <hr/>
+                <form action="/add_interests" method="POST">
+                    <h3>Hobbies</h3>
+                    <div class="d-flex flex-wrap">
+                        <% hobbies.forEach(hobby => { %>
+                            <div class="m-1">
+                                <input type="checkbox" class="btn-check" id="<%- hobby.hobby %>" name="<%- hobby.hobby %>" autocomplete='off' value="" <%- interests.includes(hobby.hobby) ? 'checked' : '' %>>
+                                <label class="btn btn-light" for="<%- hobby.hobby %>"><%- hobby.hobby %></label>
+                            </div>
+                        <% }); %>
+                    </div>
+                    <hr/>
+                    <h3>TV Shows</h3>
+                    <div class="d-flex flex-wrap">
+                        <% tv_shows.forEach(show => { %>
+                            <div class="m-1">
+                                <input type="checkbox" class="btn-check" id="<%- show.show %>" name="<%- show.show %>" autocomplete="off" value="" <%- interests.includes(show.show) ? 'checked' : '' %>>
+                                <label class="btn btn-light" for="<%- show.show %>"><%- show.show %></label>
+                            </div>
+                        <% }); %>
+                    </div>
+                    <hr/>
+                    <h3>Movies</h3>
+                    <div class="d-flex flex-wrap">
+                        <% movies.forEach(movie => { %>
+                            <div class="m-1">
+                                <input type="checkbox" class="btn-check" id="<%- movie.movie %>" name="<%- movie.movie %>" autocomplete="off" value="" <%- interests.includes(movie.movie) ? 'checked' : '' %>>
+                                <label class="btn btn-light" for="<%- movie.movie %>"><%- movie.movie %></label>
+                            </div>
+                        <% }); %>
+                    </div>
+                    <hr/>
+                    <h3>Music Artists</h3>
+                    <div class="d-flex flex-wrap">
+                        <% artists.forEach(artist => { %>
+                            <div class="m-1">
+                                <input type="checkbox" class="btn-check" id="<%- artist.artist %>" name="<%- artist.artist %>" autocomplete="off" value="" <%- interests.includes(artist.artist) ? 'checked' : '' %>>
+                                <label class="btn btn-light" for="<%- artist.artist %>"><%- artist.artist %></label>
+                            </div>
+                        <% }); %>
+                    </div>
+                    <hr/>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 <script src="/public/js/script.js"></script>
-<script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?key=AljStGYPC2c0wdx-bBLB6DEKMphxfnbKeD98nf5NMJT7g_EFDUBTjzBxVN4-kqvX&callback=loadMapScenario' async defer></script>
-<script>
-    window.onload = loadMapScenario();
-</script>
 <%- include('../partials/footer') %>

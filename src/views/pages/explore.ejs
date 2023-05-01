@@ -3,22 +3,14 @@
 <%- include ('../partials/message') %>
 <div class="d-flex align-items-center" style="height: 100vh;">
     <div class="container">
-        <div class="row mb-3">
-            <div class="col-md-8">
-                <div class="input-group">
-                    <input type="text" id="search-input" class="form-control" placeholder="Enter city name">
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-primary"
-                            onclick="searchListings()">Search</button>
-                    </div>
-                </div>
-            </div>
+        <div class="d-flex justify-content-end mb-3">
+                <a class="btn btn-primary" href="/add_listing">Add Listing</a>
         </div>
         <div class="row">
             <div class="col-lg-8 col-md-6 col-sm-4 d-none d-sm-block">
                 <div class="card shadow-lg">
                     <div class="card-body map-container">
-                        <div id="myMap"></div>
+                        <div id='map' style='width: 100%;height:100%;'></div>
                     </div>
                 </div>
             </div>
@@ -26,12 +18,29 @@
                 <div class="card shadow-lg">
                     <div class="card-body listings-container">
                         <div class="d-flex flex-column">
+                            <% if(locals.listings.length == 0) { %>
+                                <p class="text-secondary">There are no listings in this area</p>
+                            <% } %>
                             <% locals.listings.forEach(listing=> { %>
                                 <div id="<%- listing.listing_id %>" class="card p-2 mb-3"
                                     style="width: 100%;">
-                                    <img class="card-img-top"
-                                        src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
-                                        alt="Card image cap">
+                                    <div id="c-<%- listing.listing_id %>" class="carousel slide">
+                                        <div class="carousel-inner">
+                                            <% listing.images.forEach(image => {%>
+                                          <div class="carousel-item active">
+                                            <img src="<%- image %>" class="d-block w-100" alt="...">
+                                          </div>
+                                          <% }); %>
+                                        </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#c-<%- listing.listing_id %>" data-bs-slide="prev">
+                                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                          <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#c-<%- listing.listing_id %>" data-bs-slide="next">
+                                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                          <span class="visually-hidden">Next</span>
+                                        </button>
+                                      </div>
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-9">
@@ -44,13 +53,13 @@
                                                 </h5>
                                             </div>
                                         </div>
-                                        <p class="card-text">
+                                        <p class="card-text mb-3">
                                             <%- listing.description %>
                                         </p>
-                                        <form action="/listing" method="POST">
-                                            <input type="hidden" id="property_id" name="property_id" value="<%-listing.property_id%>">
-                                            <button type="submit" class="btn btn-primary">Apply</button>
-                                        </form>
+                                        <p class="card-text">
+                                            <strong>You have <%- listing.interests.filter(element => user.interests.includes(element)).length %> common interests </strong>
+                                        </p>
+                                        <a class="btn btn-primary" href="/listing/<%- listing.listing_id %>">Apply</a>
                                     </div>
                                 </div>
                                 <% }); %>
@@ -61,9 +70,6 @@
         </div>
     </div>
 </div>
+<script src="https://unpkg.com/@mapbox/mapbox-sdk/umd/mapbox-sdk.min.js"></script>
 <script src="/public/js/script.js"></script>
-<script type='text/javascript' src='http://www.bing.com/api/maps/mapcontrol?callback=getMap&key=AljStGYPC2c0wdx-bBLB6DEKMphxfnbKeD98nf5NMJT7g_EFDUBTjzBxVN4-kqvX' async defer></script>
-<script>
-    window.onload = getMap();
-</script>
 <%- include ('../partials/footer') %>
