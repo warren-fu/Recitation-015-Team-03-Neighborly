@@ -26,21 +26,21 @@
                 <hr/>
                 <form action="/change_address" method="POST">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="address_line1" name="address_line1" value="<%- address_line1 %>" required>
+                        <input type="text" class="form-control" id="address_line1" name="address_line1" value="<%- locals.address_line1 %>" required>
                         <label for="address_line1">Address Line 1</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="address_line1" name="address_line2" value="<%- address_line2 %>">
+                        <input type="text" class="form-control" id="address_line1" name="address_line2" value="<%- locals.address_line2 %>">
                         <label for="address_line2">Address Line 2</label>
                     </div>
                     <div class="row mb-3">
                         <div class="form-floating col-5">
-                            <input type="text" class="form-control" id="address_line1" name="city" value="<%- city %>">
+                            <input type="text" class="form-control" id="address_line1" name="city" value="<%- locals.city %>">
                             <label for="address_line2">City</label>
                         </div>
                         <div class="form-floating col-3">
                             <select class="form-control" name="state">
-                                <option value="<%- state %>"><%- state %></option>
+                                <option value="<%- locals.state %>"><%- locals.state %></option>
                                 <option value="AL">AL</option>
                                 <option value="AK">AK</option>
                                 <option value="AR">AR</option>
@@ -96,7 +96,7 @@
                             <label for="state">State</label>
                         </div>
                         <div class="form-floating col-4">
-                            <input type="text" class="form-control" id="address_line1" name="zipcode" value="<%- zipcode %>">
+                            <input type="text" class="form-control" id="address_line1" name="zipcode" value="<%- locals.zipcode %>">
                             <label for="zipcode">Postal Code</label>
                         </div>
                     </div>
@@ -113,7 +113,7 @@
                 <form action="/add_interests" method="POST">
                     <h3>Hobbies</h3>
                     <div class="d-flex flex-wrap">
-                        <% hobbies.forEach(hobby => { %>
+                        <% locals.hobbies.forEach(hobby => { %>
                             <div class="m-1">
                                 <input type="checkbox" class="btn-check" id="<%- hobby.hobby %>" name="<%- hobby.hobby %>" autocomplete='off' value="" <%- interests.includes(hobby.hobby) ? 'checked' : '' %>>
                                 <label class="btn btn-light" for="<%- hobby.hobby %>"><%- hobby.hobby %></label>
@@ -123,7 +123,7 @@
                     <hr/>
                     <h3>TV Shows</h3>
                     <div class="d-flex flex-wrap">
-                        <% tv_shows.forEach(show => { %>
+                        <% locals.tv_shows.forEach(show => { %>
                             <div class="m-1">
                                 <input type="checkbox" class="btn-check" id="<%- show.show %>" name="<%- show.show %>" autocomplete="off" value="" <%- interests.includes(show.show) ? 'checked' : '' %>>
                                 <label class="btn btn-light" for="<%- show.show %>"><%- show.show %></label>
@@ -133,7 +133,7 @@
                     <hr/>
                     <h3>Movies</h3>
                     <div class="d-flex flex-wrap">
-                        <% movies.forEach(movie => { %>
+                        <% locals.movies.forEach(movie => { %>
                             <div class="m-1">
                                 <input type="checkbox" class="btn-check" id="<%- movie.movie %>" name="<%- movie.movie %>" autocomplete="off" value="" <%- interests.includes(movie.movie) ? 'checked' : '' %>>
                                 <label class="btn btn-light" for="<%- movie.movie %>"><%- movie.movie %></label>
@@ -143,10 +143,30 @@
                     <hr/>
                     <h3>Music Artists</h3>
                     <div class="d-flex flex-wrap">
-                        <% artists.forEach(artist => { %>
+                        <% locals.artists.forEach(artist => { %>
                             <div class="m-1">
                                 <input type="checkbox" class="btn-check" id="<%- artist.artist %>" name="<%- artist.artist %>" autocomplete="off" value="" <%- interests.includes(artist.artist) ? 'checked' : '' %>>
                                 <label class="btn btn-light" for="<%- artist.artist %>"><%- artist.artist %></label>
+                            </div>
+                        <% }); %>
+                    </div>
+                    <hr/>
+                    <h3>Majors</h3>
+                    <div class="d-flex flex-wrap">
+                        <% locals.majors.forEach(major => { %>
+                            <div class="m-1">
+                                <input type="checkbox" class="btn-check" id="<%- major.major %>" name="<%- major.major %>" autocomplete="off" value="" <%- interests.includes(major.major) ? 'checked' : '' %>>
+                                <label class="btn btn-light" for="<%- major.major %>"><%- major.major %></label>
+                            </div>
+                        <% }); %>
+                    </div>
+                    <hr/>
+                    <h3>Jobs</h3>
+                    <div class="d-flex flex-wrap">
+                        <% locals.jobs.forEach(job => { %>
+                            <div class="m-1">
+                                <input type="checkbox" class="btn-check" id="<%- job.job %>" name="<%- job.job %>" autocomplete="off" value="" <%- interests.includes(job.job) ? 'checked' : '' %>>
+                                <label class="btn btn-light" for="<%- job.job %>"><%- job.job %></label>
                             </div>
                         <% }); %>
                     </div>

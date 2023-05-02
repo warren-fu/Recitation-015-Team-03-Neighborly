@@ -221,13 +221,17 @@ app.post("/login", (req, res) => {
     const tv_query = 'SELECT show FROM tv_shows;';
     const movie_query = 'SELECT movie FROM movies;';
     const artist_query = 'SELECT artist FROM artists;';
+    const major_query = 'SELECT major FROM majors;';
+    const job_query = 'SELECT job FROM jobs;';
     db.task(task => {
       return task.batch([
         task.one(property_query, [user.username]),
         task.any(hobby_query),
         task.any(tv_query),
         task.any(movie_query),
-        task.any(artist_query)
+        task.any(artist_query),
+        task.any(major_query),
+        task.any(job_query)
       ]);
     })
       .then(data => {
@@ -252,6 +256,8 @@ app.post("/login", (req, res) => {
           tv_shows: data[2],
           movies: data[3],
           artists: data[4],
+          majors: data[5],
+          jobs: data[6],
         });
       })
       .catch(err => {

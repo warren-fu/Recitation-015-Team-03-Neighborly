@@ -116,3 +116,17 @@ CREATE TABLE IF NOT EXISTS artists (
   artist_id SERIAL primary key,
   artist VARCHAR(100) NOT NULL
 );
+
+DROP TABLE IF EXISTS majors CASCADE;
+
+CREATE TABLE IF NOT EXISTS majors (
+  major_id SERIAL primary key,
+  major VARCHAR(100) NOT NULL
+);
+
+DROP TABLE IF EXISTS jobs CASCADE;
+
+CREATE TABLE IF NOT EXISTS jobs (
+  job_id SERIAL primary key,
+  job VARCHAR(100) NOT NULL
+);
