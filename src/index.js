@@ -91,6 +91,7 @@ app.get("/register", (req, res) => {
 app.post("/register", async (req, res) => {
   const { first_name, last_name, email, username, password, confirm_password, phone_number, gender, birthdate } = req.body;
   if (password != confirm_password) {
+    // res.json({message: 'Passwords do not match'});
     return res.render("pages/register", {
       error: "danger",
       message: "Passwords do not match",
@@ -106,6 +107,7 @@ app.post("/register", async (req, res) => {
     .then(data => {
       db.any(query_user, [username, first_name, last_name, data.property_id, hash, email, phone_number, gender, birthdate])
         .then((data) => {
+          // res.json({message: 'Success'});
           return res.redirect("/login");
         })
         .catch(function () {
@@ -150,7 +152,7 @@ app.post("/login", (req, res) => {
 
         req.session.user = user;
         req.session.save();
-
+        // res.json({message: 'Success'});
         res.redirect("/explore");
       } else {
         res.render("pages/login", {
@@ -161,12 +163,14 @@ app.post("/login", (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+      // res.json({message: 'User does not exist'});
       res.render("pages/login", {
         error: "danger",
         message: "Incorrect username or password",
       });
     });
 });
+
 
   const auth = (req, res, next) => {
     if (!req.session.user) {
