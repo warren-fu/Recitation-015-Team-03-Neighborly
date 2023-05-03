@@ -537,6 +537,7 @@ app.post("/login", (req, res) => {
         res.render("partials/post", {
           replies: data[0],
           post: data[1],
+          user: user
         });
       })
       .catch((err) => {
@@ -613,6 +614,31 @@ app.post("/login", (req, res) => {
         });
       })
   });
+
+  app.post("/deletePost", (req, res) =>{
+    const reply = req.body.reply;
+    const queryReply = "DELETE FROM replies WHERE reply_value = $1 returning *;"
+    const queryPostToReply = "DELETE FROM post_to_replies WHERE reply_id = $1 returning *;"
+
+    db.one(queryReply, [reply])
+      .then((data1) => {
+        db.one(queryPostToReply, [data1.reply_id])
+          .then((data2) => {
+            res.redirect("/feed");
+          })
+          .catch((err) => {
+            res.end();
+          });
+      })
+      .catch((err) => {
+        res.end();
+      });
+  });
+
+  app.get("/editPost", (res, req) =>{
+
+  });
+
 
   app.get('/interests', (req, res) => {
     const username = req.session.user.username;

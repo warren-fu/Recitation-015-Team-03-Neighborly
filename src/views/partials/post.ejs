@@ -20,6 +20,14 @@
             </div>
         <% } else { 
             locals.replies.forEach(reply => { %>
+                <% if (reply.username == user.username) { %>
+                    <form action="/deletePost" method="POST">
+                        <input type="hidden" name="reply" value="<%- reply.reply_value%>">
+                        <button type="submit" class="btn" style = "float: right;">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                <% } %>
                 <p class="text-secondary"><%- reply.username %></p>
                 <p><%- reply.reply_value %></p>
                 <hr/>
