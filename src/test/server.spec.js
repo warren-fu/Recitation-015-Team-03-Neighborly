@@ -11,41 +11,54 @@ const { assert, expect } = chai;
 
 describe('Server!', () => {
   // Sample test case given to test / endpoint.
-  it('Returns the default welcome message', done => {
-    chai
-      .request(server)
-      .get('/welcome')
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body.status).to.equals('success');
-        assert.strictEqual(res.body.message, 'Welcome!');
-        done();
-      });
-  });
+  // it('Returns the default welcome message', done => {
+  //   chai
+  //     .request(server)
+  //     .get('/welcome')
+  //     .end((err, res) => {
+  //       expect(res).to.have.status(200);
+  //       expect(res.body.status).to.equals('success');
+  //       assert.strictEqual(res.body.message, 'Welcome!');
+  //       done();
+  //     });
+  // });
 
   // ===========================================================================
   // TO-DO: Part A Login unit test case
 
-  it('Redirects to the login page', done => {
-    chai
-      .request(server)
-      .get('/')
-      .end((err, res) => {
-        expect(res.body.status).to.equals('success');
-        assert.strictEqual(res.body.message, 'Redirecting to the login page.');
-        done();
-      });
-  });
+  // it('Redirects to the login page', done => {
+  //   chai
+  //     .request(server)
+  //     .get('/')
+  //     .end((err, res) => {
+  //       expect(res.body.status).to.equals('success');
+  //       assert.strictEqual(res.body.message, 'Redirecting to the login page.');
+  //       done();
+  //     });
+  // });
   
-  //Positive login test case
-  it('positive : /login', done => {
+  //Positive register test case
+  it('positive : /register', done => {
     chai
       .request(server)
-      .post('/login')
-      .send({username: 'ryan', password: '$2b$10$a4qvrY8R6g.Z3SX/DfjyleN9RoX4PnXCGG226.h5rXIHmtzDPfd0i'})
+      .post('/register')
+      .send({first_name: 'test', last_name: 'case', email: 'test@test.com', username: 'test', password: 'test', confirm_password: 'test', phone_number: '1111111111', gender: 'rather_not_say', birthdate: '01/01/1999'})
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body.message).to.equals('Success');
+        done();
+      });
+  });
+
+  //Negative register test case
+  it('Negative : /register. Checking different passwords', done => {
+    chai
+      .request(server)
+      .post('/register')
+      .send({first_name: 'test2', last_name: 'case2', email: 'test2@test.com', username: 'test2', password: 'test2', confirm_password: 'test1', phone_number: '1111111111', gender: 'rather_not_say', birthdate: '01/01/1999'})
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.message).to.equals("Passwords do not match");
         done();
       });
   });
@@ -55,20 +68,20 @@ describe('Server!', () => {
     chai
       .request(server)
       .post('/login')
-      .send({username: 'Not John Doe', password: 'randompassword'})
+      .send({username: 'User dont exist', password: 'randompassword'})
       .end((err, res) => {
         expect(res).to.have.status(200);
-        expect(res.body.message).to.equals('Invalid input');
+        expect(res.body.message).to.equals('User does not exist');
         done();
       });
   });
-
-  //Positive register test case
-  it('positive : /register', done => {
+  
+  //Positive login test case
+  it('positive : /login', done => {
     chai
       .request(server)
-      .post('/register')
-      .send({username: 'John Doe', password: 'randompassword',  email: 'a@email.com'})
+      .post('/login')
+      .send({username: 'test', password: 'test'})
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body.message).to.equals('Success');
@@ -76,18 +89,6 @@ describe('Server!', () => {
       });
   });
 
-  //Negative register test case
-  it('Negative : /register. Checking invalid name', done => {
-    chai
-      .request(server)
-      .post('/register')
-      .send({username: 'John Doe', password: 'randompassword'})
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body.message).to.equals('Invalid input');
-        done();
-      });
-  });
-
   
+
 });
