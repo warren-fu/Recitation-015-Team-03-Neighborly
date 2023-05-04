@@ -10,6 +10,7 @@ const session = require("express-session"); // To set the session object. To sto
 const bcrypt = require("bcrypt"); //  To hash passwords
 const axios = require("axios"); // To make HTTP requests from our server. We'll learn more about it in Part B.
 const { json } = require("body-parser");
+const fileUpload = require('express-fileupload');
 const fs = require("fs");
 const busboy = require("connect-busboy");
 const { errorMonitor } = require("events");
@@ -59,7 +60,7 @@ app.set("view engine", "ejs"); // set the view engine to EJS
 app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
 
 // // for file uploading
-// app.use(fileUpload());
+app.use(fileUpload());
 
 // initialize session variables
 app.use(
@@ -881,29 +882,69 @@ app.post("/login", (req, res) => {
   app.get('/listing/:lid', (req, res) => {
     const list_id = req.params.lid;
     const query = 'SELECT * FROM listing JOIN properties AS prop ON listing.property_id = prop.property_id JOIN users ON users.property_id = prop.property_id WHERE listing_id = $1 AND ARRAY_LENGTH(users.interests, 1) > 0;';
-    const user_query = 'SELECT interests FROM users WHERE username = $1;';
-
+    const user_query = 'SELECT interests FROM users WHERE username = $1;'; 
+  
     db.task(task => {
       return task.batch([
         task.one(query, [list_id]),
-        task.one(user_query, [user.username])
+        task.one(user_query, [req.session.user.username])
       ]);
     })
-      .then(data => {
-        res.render('pages/listing', {
-          fixed_navbar: false,
-          username: user.username,
-          listing: data[0],
-          user: data[1]
-        });
-      })
-      .catch(err => {
-        res.render('pages/listing', {
-          fixed_navbar: false,
-          username: user.username,
-          message: err
-        });
+    .then(async data => {
+      var addy = data[0].address_line1+ ", " + data[0].city+ ", " + data[0].state;
+      console.log(addy);
+      const zillowSearchOptions = {
+        method: 'GET',
+        url: 'https://zillow56.p.rapidapi.com/search',
+        params: {
+          location: addy
+        },
+        headers: {
+          'content-type': 'application/octet-stream',
+          'X-RapidAPI-Key': '51110bf831mshd401637aba1666dp184555jsnf920fb6f82f1',
+          'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
+        }
+      };
+      try {
+        const response = await axios.request(zillowSearchOptions);
+        var zpid = response.data.zpid;
+        console.log(zpid);
+        // console.log("zpid: " + zpid);
+        const zillowGetUrl = {
+          method: 'GET',
+          url: 'https://zillow56.p.rapidapi.com/property',
+          params: {zpid: `13184493`},
+          headers: {
+            'content-type': 'application/octet-stream',
+            'X-RapidAPI-Key': '159d835589msh6a85fe63b98a800p143d40jsn27485d976825',
+            'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
+          }
+        
+        };
+        try {
+          const response2 = await axios.request(zillowGetUrl);
+          console.log(response2.data.hdpUrl);
+          res.render('pages/listing', {
+            fixed_navbar: false,
+            username: user.username,
+            listing: data[0],
+            user: data[1],
+            url: response2.data.hdpUrl
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })
+    .catch(err => {
+      res.render('pages/listing', {
+        fixed_navbar: false,
+        username: req.session.user.username,
+        message: err
       });
+    });
   });
 
   app.post('/change_address', async (req, res) => {
