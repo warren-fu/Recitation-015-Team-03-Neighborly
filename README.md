@@ -23,6 +23,6 @@
   - After everything is setup, run the command "docker-compose up -d" and wait until the package.json-lock is created.
   - Search up "http://localhost:3000/" in your local browser
 6. How to run the tests:
-  - Not sure
+  - The tests are in the server.spec.js. To view these tests, run the command "docker-compose up" which should display the current output of the tests.
 7. Link to the deployed application:
   - http://recitation-15-team-3.eastus.cloudapp.azure.com:3000/login
