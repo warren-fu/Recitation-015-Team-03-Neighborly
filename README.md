@@ -10,7 +10,12 @@
   - Warren Fu
   - Juno Park
 3. Technology Stack used for the project:
-  - Not sure
+  - HTML
+  - CSS
+  - JavaScript
+  - Node JS
+  - EJS
+  - Linux
 4. Prerequisites to run the application:
   - If the website is being ran on the cloud, then all you need is the link to the website.
 5. Instructions on how to run the application locally:
